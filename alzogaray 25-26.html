@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Alzogaray · Estación Agrometeorológica</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8C%BE%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,800&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+  :root {
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+
+    --bg: #F2F4EE;
+    --surface: #FFFFFF;
+    --surface-2: #E9ECE2;
+    --ink: #1B241E;
+    --ink-soft: #566056;
+    --ink-faint: #8A9389;
+    --line: #D7DBCC;
+
+    --water: #1D5C8A;
+    --water-soft: #DCEBF4;
+    --heat: #BC4310;
+    --heat-soft: #F7DFCE;
+    --drought: #8A6A3C;
+    --drought-soft: #EDE1C7;
+    --accent: #C98A1F;
+    --accent-soft: #F3E4C4;
+
+    --radius-s: 4px;
+    --radius-m: 10px;
+    --shadow: 0 1px 2px rgba(27,36,30,0.06), 0 6px 20px -12px rgba(27,36,30,0.18);
+
+    --font-display: 'Fraunces', Georgia, serif;
+    --font-body: 'IBM Plex Sans', -apple-system, sans-serif;
+    --font-mono: 'IBM Plex Mono', 'SFMono-Regular', monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #10140F;
+      --surface: #171D16;
+      --surface-2: #1E251C;
+      --ink: #EAEFE4;
+      --ink-soft: #A8B4A2;
+      --ink-faint: #6E7A6A;
+      --line: #2A322A;
+
+      --water: #67AEE0;
+      --water-soft: #1B3548;
+      --heat: #E68455;
+      --heat-soft: #3D2413;
+      --drought: #D3B47D;
+      --drought-soft: #362A16;
+      --accent: #E9BE5F;
+      --accent-soft: #3A2D12;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -14px rgba(0,0,0,0.6);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #10140F;
+    --surface: #171D16;
+    --surface-2: #1E251C;
+    --ink: #EAEFE4;
+    --ink-soft: #A8B4A2;
+    --ink-faint: #6E7A6A;
+    --line: #2A322A;
+    --water: #67AEE0;
+    --water-soft: #1B3548;
+    --heat: #E68455;
+    --heat-soft: #3D2413;
+    --drought: #D3B47D;
+    --drought-soft: #362A16;
+    --accent: #E9BE5F;
+    --accent-soft: #3A2D12;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -14px rgba(0,0,0,0.6);
+  }
+
+  * { box-sizing: border-box; }
+  .sr-only {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    white-space: nowrap;
+    border: 0;
+  }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  html, body { height: auto; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 28px 24px 64px;
+  }
+
+  /* ---------- Header / nameplate ---------- */
+  header.station {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 18px;
+    padding-bottom: 22px;
+    margin-bottom: 28px;
+    border-bottom: 1px solid var(--line);
+  }
+  .station-id {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    color: var(--ink-faint);
+    margin: 0 0 6px;
+  }
+  .station-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(30px, 4vw, 44px);
+    line-height: 1.05;
+    margin: 0;
+    color: var(--ink);
+  }
+  .station-title em {
+    font-style: italic;
+    font-weight: 500;
+    color: var(--ink-soft);
+  }
+  .station-meta {
+    text-align: right;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    line-height: 1.7;
+  }
+  .station-meta .n {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  /* ---------- Section labels ---------- */
+  .section-label {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    color: var(--ink-faint);
+    margin: 0 0 12px;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+  .section-label .rule { flex: 1; height: 1px; background: var(--line); }
+
+  section { margin-bottom: 44px; }
+
+  /* ---------- KPI cards ---------- */
+  .kpis {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
+  @media (max-width: 880px) { .kpis { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 520px) { .kpis { grid-template-columns: 1fr; } }
+
+  .kpi {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    border-radius: var(--radius-m);
+    padding: 18px 18px 16px;
+    box-shadow: var(--shadow);
+  }
+  .kpi.water { border-left-color: var(--water); }
+  .kpi.heat { border-left-color: var(--heat); }
+  .kpi.drought { border-left-color: var(--drought); }
+
+  .kpi-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    color: var(--ink-faint);
+    margin: 0 0 10px;
+  }
+  .kpi-value {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 30px;
+    color: var(--ink);
+    margin: 0 0 8px;
+    white-space: nowrap;
+  }
+  .kpi-value .unit { font-size: 16px; color: var(--ink-soft); font-weight: 500; }
+  .kpi-sub {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  /* ---------- Chart panel ---------- */
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-m);
+    padding: 22px 22px 12px;
+    box-shadow: var(--shadow);
+  }
+  .chart-holder { position: relative; height: 360px; }
+  .legend-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px 22px;
+    margin: 4px 2px 18px;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+  }
+  .legend-item { display: flex; align-items: center; gap: 7px; }
+  .swatch { width: 12px; height: 12px; border-radius: 3px; display: inline-block; flex: none; }
+  .swatch.line { width: 16px; height: 3px; border-radius: 2px; }
+
+  /* ---------- Calendario de alertas (heatmap día a día) ---------- */
+  .calendar-scroll { overflow-x: auto; padding-bottom: 4px; }
+  .calendar-inner { display: inline-block; }
+  .cal-months {
+    position: relative;
+    height: 16px;
+    margin: 0 0 4px 30px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink-faint);
+  }
+  .cal-months span { position: absolute; top: 0; white-space: nowrap; }
+  .cal-row { display: flex; align-items: flex-start; }
+  .cal-dow {
+    display: grid;
+    grid-template-rows: repeat(7, 13px);
+    gap: 3px;
+    width: 24px;
+    margin-right: 6px;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--ink-faint);
+  }
+  .cal-dow span { display: flex; align-items: center; height: 13px; }
+  .calendar-grid {
+    display: grid;
+    grid-template-rows: repeat(7, 13px);
+    gap: 3px;
+  }
+  .cal-cell {
+    width: 13px;
+    height: 13px;
+    border-radius: 3px;
+    background: var(--surface-2);
+    box-sizing: border-box;
+    cursor: default;
+    transition: outline-color 0.1s ease;
+  }
+  .cal-cell.nodata {
+    background: repeating-linear-gradient(45deg, var(--surface-2), var(--surface-2) 2px, var(--line) 2px, var(--line) 4px);
+  }
+  .cal-cell.dry { background: var(--drought); }
+  .cal-cell.heat-ring { box-shadow: 0 0 0 2px var(--heat) inset; }
+  .cal-cell:hover, .cal-cell:focus-visible { outline: 1.5px solid var(--ink); outline-offset: 1px; }
+  .cal-cell:focus { outline: 1.5px solid var(--ink); outline-offset: 1px; }
+
+  .cal-tooltip {
+    position: fixed;
+    z-index: 60;
+    max-width: 230px;
+    background: var(--ink);
+    color: var(--bg);
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    line-height: 1.45;
+    padding: 7px 10px;
+    border-radius: var(--radius-s);
+    box-shadow: var(--shadow);
+    pointer-events: none;
+  }
+  .cal-tooltip[hidden] { display: none; }
+
+  .cal-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px 22px;
+    margin: 16px 2px 4px;
+    font-size: 12px;
+    color: var(--ink-soft);
+    align-items: center;
+  }
+  .cal-legend .legend-item { display: flex; align-items: center; gap: 7px; }
+  .cal-legend .scale { display: flex; gap: 2px; }
+  .cal-legend .scale span { width: 11px; height: 11px; border-radius: 2px; display: inline-block; }
+
+  .event-list {
+    list-style: none;
+    margin: 4px 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 8px 16px;
+  }
+  .event-list li {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+    border-top: 1px solid var(--line);
+    padding-top: 7px;
+  }
+  .event-list .dot { width: 8px; height: 8px; border-radius: 50%; flex: none; margin-top: 2px; }
+  .event-list .dot.dry { background: var(--drought); }
+  .event-list .dot.heatwave { background: var(--heat); }
+  .event-list b { color: var(--ink); font-weight: 600; }
+
+  /* ---------- Table ---------- */
+  table.monthly {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  table.monthly th, table.monthly td {
+    text-align: right;
+    padding: 9px 10px;
+    border-bottom: 1px solid var(--line);
+    white-space: nowrap;
+  }
+  table.monthly th:first-child, table.monthly td:first-child {
+    text-align: left;
+    position: sticky;
+    left: 0;
+    background: var(--surface);
+  }
+  table.monthly thead th:first-child { z-index: 2; }
+  table.monthly tbody td:first-child { z-index: 1; }
+  table.monthly thead th {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 11px;
+    letter-spacing: 0.03em;
+    color: var(--ink-faint);
+  }
+  table.monthly tbody td:first-child {
+    font-weight: 600;
+    font-family: var(--font-display);
+  }
+  table.monthly tbody tr:hover td:first-child { background: var(--surface-2); }
+  table.monthly tbody tr:hover { background: var(--surface-2); }
+  .table-scroll { overflow-x: auto; }
+
+  /* ---------- Insights ---------- */
+  .insights {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-m);
+    padding: 22px 24px;
+    box-shadow: var(--shadow);
+  }
+  .insights ul { margin: 0; padding: 0 0 0 18px; }
+  .insights li { margin-bottom: 12px; color: var(--ink-soft); }
+  .insights li:last-child { margin-bottom: 0; }
+  .insights li b { color: var(--ink); font-weight: 600; }
+  .insights li.note { font-family: var(--font-mono); font-size: 12px; color: var(--ink-faint); list-style: none; margin-left: -18px; margin-top: 16px; padding-top: 14px; border-top: 1px dashed var(--line); }
+
+  footer {
+    margin-top: 40px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--ink-faint);
+  }
+
+  @media (max-width: 640px) {
+    .station-meta { text-align: left; }
+    .chart-holder { height: 300px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="station">
+    <div>
+      <p class="station-id">ESTACIÓN AGROMETEOROLÓGICA · REGISTRO DIARIO</p>
+      <h1 class="station-title">Alzogaray <em>· Campaña</em></h1>
+    </div>
+    <div class="station-meta">
+      <div><span class="n" id="meta-range">—</span></div>
+      <div><span class="n" id="meta-days">—</span> días de registro</div>
+    </div>
+  </header>
+
+  <section class="kpis" id="kpi-section"></section>
+
+  <section>
+    <p class="section-label">CLIMOGRAMA MENSUAL <span class="rule"></span></p>
+    <div class="panel">
+      <div class="legend-row">
+        <div class="legend-item"><span class="swatch" style="background:var(--water)"></span>Precipitación (mm)</div>
+        <div class="legend-item"><span class="swatch line" style="background:var(--ink-soft)"></span>Temp. media</div>
+        <div class="legend-item"><span class="swatch line" style="background:var(--heat)"></span>Temp. máx. promedio</div>
+        <div class="legend-item"><span class="swatch line" style="background:var(--water)"></span>Temp. mín. promedio</div>
+        <div class="legend-item"><span class="swatch" style="background:var(--drought-soft)"></span>Mes árido (Gaussen: P &lt; 2×T)</div>
+      </div>
+      <div class="chart-holder">
+        <canvas id="climograma" role="img" aria-describedby="climograma-desc"></canvas>
+      </div>
+      <p id="climograma-desc" class="sr-only">Los valores mensuales exactos de precipitación y temperatura se detallan en la tabla de Resumen mensual más abajo.</p>
+    </div>
+  </section>
+
+  <section>
+    <p class="section-label">CALENDARIO DE ALERTAS · DÍA A DÍA <span class="rule"></span></p>
+    <div class="panel">
+      <div class="calendar-scroll">
+        <div class="calendar-inner">
+          <div class="cal-months" id="cal-months"></div>
+          <div class="cal-row">
+            <div class="cal-dow" id="cal-dow"></div>
+            <div class="calendar-grid" id="calendar-grid"></div>
+          </div>
+        </div>
+      </div>
+      <div class="cal-legend" id="cal-legend"></div>
+      <ul class="event-list" id="event-list"></ul>
+    </div>
+  </section>
+
+  <section>
+    <p class="section-label">RESUMEN MENSUAL <span class="rule"></span></p>
+    <div class="panel table-scroll">
+      <table class="monthly">
+        <thead>
+          <tr><th>Mes</th><th>Precip. (mm)</th><th>T° media</th><th>T° máx. prom.</th><th>T° mín. prom.</th><th>T° máx. abs.</th><th>T° mín. abs.</th></tr>
+        </thead>
+        <tbody id="monthly-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <p class="section-label">LECTURA EJECUTIVA <span class="rule"></span></p>
+    <div class="insights">
+      <ul id="insights-list"></ul>
+    </div>
+  </section>
+
+  <footer>
+    Fuente: registro diario de estación Alzogaray. Rachas secas y olas de calor recalculadas de forma independiente a partir de los datos diarios (no se emplearon las columnas de alerta del archivo original, cuyo campo de días presentaba una inconsistencia). Panel generado con Claude.
+  </footer>
+
+</div>
+
+<script>
+const DATA = {"monthly":[{"label":"Sep 2025","precip":56.1,"tmed":14.8,"tmax":22.6,"tmin":7.3,"tmax_abs":31.0,"tmin_abs":-1.4},{"label":"Oct 2025","precip":48.8,"tmed":17.9,"tmax":25.0,"tmin":10.3,"tmax_abs":33.7,"tmin_abs":1.6},{"label":"Nov 2025","precip":128.0,"tmed":20.1,"tmax":26.9,"tmin":12.4,"tmax_abs":36.1,"tmin_abs":4.6},{"label":"Dic 2025","precip":25.7,"tmed":23.3,"tmax":30.3,"tmin":15.9,"tmax_abs":37.0,"tmin_abs":8.4},{"label":"Ene 2026","precip":60.5,"tmed":23.9,"tmax":30.9,"tmin":16.7,"tmax_abs":36.2,"tmin_abs":11.6},{"label":"Feb 2026","precip":46.3,"tmed":21.2,"tmax":27.6,"tmin":15.3,"tmax_abs":32.5,"tmin_abs":11.6},{"label":"Mar 2026","precip":134.9,"tmed":20.0,"tmax":26.3,"tmin":14.1,"tmax_abs":33.8,"tmin_abs":5.7},{"label":"Abr 2026","precip":121.4,"tmed":15.2,"tmax":21.1,"tmin":9.7,"tmax_abs":28.4,"tmin_abs":-3.0}],"daily":[{"f":"2025-09-01","p":0.0,"tm":9.1,"tn":2.0,"tx":16.8},{"f":"2025-09-02","p":0.0,"tm":12.1,"tn":3.6,"tx":20.6},{"f":"2025-09-03","p":0.0,"tm":7.3,"tn":1.1,"tx":13.5},{"f":"2025-09-04","p":0.0,"tm":5.5,"tn":-1.4,"tx":12.5},{"f":"2025-09-05","p":0.0,"tm":7.6,"tn":-1.2,"tx":15.0},{"f":"2025-09-06","p":0.0,"tm":11.9,"tn":5.9,"tx":19.2},{"f":"2025-09-07","p":0.0,"tm":11.8,"tn":4.9,"tx":19.4},{"f":"2025-09-08","p":0.0,"tm":13.1,"tn":7.1,"tx":19.5},{"f":"2025-09-09","p":0.0,"tm":16.7,"tn":4.3,"tx":26.2},{"f":"2025-09-10","p":0.0,"tm":19.3,"tn":18.4,"tx":19.9},{"f":"2025-09-11","p":0.0,"tm":14.2,"tn":3.5,"tx":26.3},{"f":"2025-09-12","p":0.0,"tm":18.9,"tn":11.5,"tx":27.2},{"f":"2025-09-13","p":0.0,"tm":19.9,"tn":13.2,"tx":28.7},{"f":"2025-09-14","p":0.0,"tm":14.1,"tn":5.8,"tx":21.5},{"f":"2025-09-15","p":0.0,"tm":16.3,"tn":8.1,"tx":25.3},{"f":"2025-09-16","p":0.0,"tm":21.6,"tn":10.0,"tx":29.3},{"f":"2025-09-17","p":0.0,"tm":20.8,"tn":15.7,"tx":26.8},{"f":"2025-09-18","p":0.0,"tm":23.4,"tn":16.5,"tx":31.0},{"f":"2025-09-19","p":2.9,"tm":17.4,"tn":14.6,"tx":24.1},{"f":"2025-09-20","p":0.9,"tm":16.7,"tn":10.4,"tx":23.8},{"f":"2025-09-21","p":0.0,"tm":11.3,"tn":6.3,"tx":16.6},{"f":"2025-09-22","p":0.0,"tm":11.4,"tn":2.9,"tx":20.3},{"f":"2025-09-23","p":0.0,"tm":15.1,"tn":4.6,"tx":24.5},{"f":"2025-09-24","p":0.0,"tm":16.0,"tn":4.2,"tx":26.7},{"f":"2025-09-25","p":0.0,"tm":18.9,"tn":11.2,"tx":28.4},{"f":"2025-09-26","p":42.3,"tm":15.9,"tn":8.0,"tx":25.1},{"f":"2025-09-27","p":10.0,"tm":10.9,"tn":5.6,"tx":17.9},{"f":"2025-09-28","p":0.0,"tm":16.9,"tn":5.7,"tx":27.2},{"f":"2025-09-29","p":0.0,"tm":16.3,"tn":9.2,"tx":24.8},{"f":"2025-09-30","p":0.0,"tm":14.5,"tn":7.7,"tx":21.4},{"f":"2025-10-01","p":0.0,"tm":18.0,"tn":11.8,"tx":25.4},{"f":"2025-10-02","p":0.0,"tm":20.5,"tn":13.3,"tx":28.8},{"f":"2025-10-03","p":0.0,"tm":23.1,"tn":15.7,"tx":30.7},{"f":"2025-10-04","p":0.0,"tm":24.4,"tn":12.3,"tx":31.6},{"f":"2025-10-05","p":0.0,"tm":11.0,"tn":2.8,"tx":17.2},{"f":"2025-10-06","p":0.0,"tm":9.5,"tn":2.4,"tx":18.3},{"f":"2025-10-07","p":0.0,"tm":16.5,"tn":4.5,"tx":25.8},{"f":"2025-10-08","p":0.0,"tm":19.3,"tn":11.9,"tx":26.1},{"f":"2025-10-09","p":0.0,"tm":23.2,"tn":18.5,"tx":30.4},{"f":"2025-10-10","p":0.0,"tm":23.8,"tn":16.4,"tx":30.8},{"f":"2025-10-11","p":0.0,"tm":16.7,"tn":8.2,"tx":21.2},{"f":"2025-10-12","p":0.0,"tm":13.1,"tn":5.8,"tx":21.8},{"f":"2025-10-13","p":0.0,"tm":18.8,"tn":7.1,"tx":28.4},{"f":"2025-10-14","p":0.0,"tm":22.3,"tn":12.9,"tx":30.0},{"f":"2025-10-15","p":0.0,"tm":24.3,"tn":17.3,"tx":31.0},{"f":"2025-10-16","p":0.1,"tm":19.3,"tn":12.2,"tx":27.2},{"f":"2025-10-17","p":1.5,"tm":12.8,"tn":7.6,"tx":14.9},{"f":"2025-10-18","p":0.0,"tm":15.3,"tn":3.3,"tx":25.1},{"f":"2025-10-19","p":0.0,"tm":21.2,"tn":15.3,"tx":27.6},{"f":"2025-10-20","p":0.0,"tm":23.5,"tn":18.8,"tx":29.1},{"f":"2025-10-21","p":0.0,"tm":25.2,"tn":17.9,"tx":30.9},{"f":"2025-10-22","p":0.0,"tm":19.3,"tn":12.3,"tx":27.9},{"f":"2025-10-23","p":29.1,"tm":24.0,"tn":16.8,"tx":33.7},{"f":"2025-10-24","p":0.6,"tm":17.0,"tn":14.2,"tx":19.8},{"f":"2025-10-25","p":0.0,"tm":13.1,"tn":6.5,"tx":19.6},{"f":"2025-10-26","p":0.0,"tm":17.8,"tn":6.7,"tx":27.1},{"f":"2025-10-27","p":4.4,"tm":5.6,"tn":3.0,"tx":12.7},{"f":"2025-10-28","p":13.1,"tm":5.2,"tn":1.8,"tx":8.4},{"f":"2025-10-29","p":0.0,"tm":11.7,"tn":1.6,"tx":19.2},{"f":"2025-10-30","p":0.0,"tm":17.5,"tn":9.7,"tx":24.4},{"f":"2025-10-31","p":0.0,"tm":20.9,"tn":11.6,"tx":29.0},{"f":"2025-11-01","p":20.3,"tm":15.0,"tn":11.4,"tx":20.4},{"f":"2025-11-02","p":0.0,"tm":18.3,"tn":10.1,"tx":26.3},{"f":"2025-11-03","p":0.0,"tm":22.0,"tn":10.8,"tx":30.0},{"f":"2025-11-04","p":6.9,"tm":18.5,"tn":14.0,"tx":23.8},{"f":"2025-11-05","p":0.0,"tm":17.3,"tn":12.6,"tx":22.6},{"f":"2025-11-06","p":7.1,"tm":17.8,"tn":12.8,"tx":23.3},{"f":"2025-11-07","p":63.2,"tm":10.3,"tn":7.6,"tx":14.4},{"f":"2025-11-08","p":0.0,"tm":14.1,"tn":4.6,"tx":22.1},{"f":"2025-11-09","p":0.0,"tm":18.7,"tn":10.3,"tx":25.1},{"f":"2025-11-10","p":0.0,"tm":21.0,"tn":13.9,"tx":26.7},{"f":"2025-11-11","p":0.0,"tm":20.0,"tn":11.4,"tx":25.8},{"f":"2025-11-12","p":0.0,"tm":17.1,"tn":12.1,"tx":23.9},{"f":"2025-11-13","p":0.0,"tm":20.1,"tn":10.5,"tx":26.2},{"f":"2025-11-14","p":0.0,"tm":23.9,"tn":17.4,"tx":29.6},{"f":"2025-11-15","p":2.1,"tm":23.8,"tn":16.5,"tx":31.2},{"f":"2025-11-16","p":0.0,"tm":17.4,"tn":8.1,"tx":22.2},{"f":"2025-11-17","p":0.0,"tm":19.4,"tn":6.9,"tx":29.1},{"f":"2025-11-18","p":0.0,"tm":22.4,"tn":11.7,"tx":30.1},{"f":"2025-11-19","p":0.0,"tm":20.0,"tn":11.0,"tx":28.8},{"f":"2025-11-20","p":0.0,"tm":23.1,"tn":14.0,"tx":32.3},{"f":"2025-11-21","p":0.0,"tm":16.5,"tn":8.5,"tx":24.0},{"f":"2025-11-22","p":0.0,"tm":18.8,"tn":6.0,"tx":28.1},{"f":"2025-11-23","p":0.0,"tm":23.7,"tn":12.1,"tx":32.2},{"f":"2025-11-24","p":0.0,"tm":26.8,"tn":18.5,"tx":34.0},{"f":"2025-11-25","p":0.0,"tm":28.6,"tn":17.9,"tx":36.1},{"f":"2025-11-26","p":6.7,"tm":27.3,"tn":16.3,"tx":35.6},{"f":"2025-11-27","p":1.4,"tm":23.8,"tn":15.6,"tx":32.1},{"f":"2025-11-28","p":18.1,"tm":20.9,"tn":18.2,"tx":25.3},{"f":"2025-11-29","p":0.1,"tm":21.2,"tn":17.2,"tx":27.5},{"f":"2025-11-30","p":2.1,"tm":15.7,"tn":14.7,"tx":17.9},{"f":"2025-12-01","p":2.8,"tm":18.3,"tn":12.9,"tx":25.2},{"f":"2025-12-02","p":0.1,"tm":20.1,"tn":12.1,"tx":27.9},{"f":"2025-12-03","p":0.0,"tm":25.4,"tn":16.8,"tx":33.0},{"f":"2025-12-04","p":0.0,"tm":28.1,"tn":19.5,"tx":35.7},{"f":"2025-12-05","p":0.0,"tm":27.9,"tn":21.2,"tx":32.9},{"f":"2025-12-06","p":6.6,"tm":19.1,"tn":16.7,"tx":23.9},{"f":"2025-12-07","p":0.0,"tm":18.8,"tn":15.7,"tx":23.5},{"f":"2025-12-08","p":0.0,"tm":20.0,"tn":13.2,"tx":26.8},{"f":"2025-12-09","p":0.0,"tm":20.7,"tn":10.2,"tx":29.9},{"f":"2025-12-10","p":0.0,"tm":24.2,"tn":13.8,"tx":33.0},{"f":"2025-12-11","p":3.5,"tm":19.9,"tn":15.9,"tx":27.1},{"f":"2025-12-12","p":0.0,"tm":25.0,"tn":16.3,"tx":32.8},{"f":"2025-12-13","p":0.3,"tm":25.4,"tn":16.5,"tx":30.4},{"f":"2025-12-14","p":1.9,"tm":15.2,"tn":10.0,"tx":17.8},{"f":"2025-12-15","p":0.0,"tm":17.0,"tn":8.4,"tx":25.0},{"f":"2025-12-17","p":0.0,"tm":28.2,"tn":21.4,"tx":33.7},{"f":"2025-12-18","p":0.0,"tm":25.1,"tn":18.5,"tx":32.3},{"f":"2025-12-19","p":0.0,"tm":26.7,"tn":17.5,"tx":35.5},{"f":"2025-12-20","p":8.0,"tm":22.2,"tn":17.5,"tx":28.1},{"f":"2025-12-21","p":1.0,"tm":19.2,"tn":15.9,"tx":23.8},{"f":"2025-12-22","p":1.1,"tm":21.5,"tn":12.0,"tx":30.9},{"f":"2025-12-23","p":0.0,"tm":23.9,"tn":15.2,"tx":32.9},{"f":"2025-12-24","p":0.0,"tm":22.1,"tn":14.2,"tx":27.7},{"f":"2025-12-25","p":0.0,"tm":24.1,"tn":12.5,"tx":34.6},{"f":"2025-12-26","p":0.0,"tm":28.3,"tn":21.9,"tx":35.3},{"f":"2025-12-27","p":0.0,"tm":24.6,"tn":17.3,"tx":30.6},{"f":"2025-12-28","p":0.0,"tm":24.2,"tn":12.9,"tx":32.4},{"f":"2025-12-29","p":0.0,"tm":26.7,"tn":20.6,"tx":34.1},{"f":"2025-12-30","p":0.4,"tm":27.9,"tn":20.9,"tx":35.8},{"f":"2025-12-31","p":0.0,"tm":28.9,"tn":21.0,"tx":37.0},{"f":"2026-01-01","p":0.0,"tm":28.2,"tn":18.4,"tx":36.2},{"f":"2026-01-02","p":0.0,"tm":23.5,"tn":16.3,"tx":30.3},{"f":"2026-01-03","p":0.0,"tm":20.6,"tn":12.9,"tx":27.6},{"f":"2026-01-04","p":0.0,"tm":21.7,"tn":13.8,"tx":29.8},{"f":"2026-01-05","p":0.0,"tm":26.7,"tn":15.9,"tx":34.5},{"f":"2026-01-06","p":0.0,"tm":24.5,"tn":16.0,"tx":28.2},{"f":"2026-01-07","p":0.0,"tm":23.8,"tn":14.8,"tx":31.4},{"f":"2026-01-08","p":11.3,"tm":16.7,"tn":12.9,"tx":19.6},{"f":"2026-01-09","p":0.5,"tm":16.5,"tn":12.8,"tx":21.6},{"f":"2026-01-10","p":0.0,"tm":20.8,"tn":11.6,"tx":29.5},{"f":"2026-01-11","p":0.0,"tm":26.2,"tn":15.9,"tx":34.4},{"f":"2026-01-12","p":0.0,"tm":28.3,"tn":22.8,"tx":34.5},{"f":"2026-01-13","p":6.4,"tm":19.9,"tn":16.0,"tx":25.4},{"f":"2026-01-14","p":0.0,"tm":25.3,"tn":15.7,"tx":33.4},{"f":"2026-01-15","p":0.0,"tm":22.1,"tn":16.5,"tx":28.8},{"f":"2026-01-16","p":0.0,"tm":24.3,"tn":14.9,"tx":33.8},{"f":"2026-01-17","p":0.0,"tm":27.2,"tn":19.7,"tx":33.3},{"f":"2026-01-18","p":0.0,"tm":19.2,"tn":14.9,"tx":25.7},{"f":"2026-01-19","p":0.0,"tm":21.9,"tn":14.4,"tx":29.1},{"f":"2026-01-20","p":0.0,"tm":25.8,"tn":20.3,"tx":32.8},{"f":"2026-01-21","p":0.0,"tm":28.4,"tn":21.4,"tx":35.4},{"f":"2026-01-22","p":0.0,"tm":28.6,"tn":23.6,"tx":35.1},{"f":"2026-01-23","p":0.0,"tm":28.3,"tn":18.6,"tx":36.1},{"f":"2026-01-24","p":18.5,"tm":24.5,"tn":18.7,"tx":33.9},{"f":"2026-01-25","p":0.0,"tm":27.4,"tn":19.7,"tx":35.1},{"f":"2026-01-26","p":15.2,"tm":21.0,"tn":15.7,"tx":28.1},{"f":"2026-01-27","p":0.4,"tm":20.3,"tn":15.4,"tx":25.8},{"f":"2026-01-28","p":0.0,"tm":25.3,"tn":17.3,"tx":33.3},{"f":"2026-01-29","p":0.0,"tm":26.6,"tn":17.0,"tx":34.8},{"f":"2026-01-30","p":0.0,"tm":26.2,"tn":16.2,"tx":34.8},{"f":"2026-01-31","p":8.2,"tm":20.7,"tn":18.2,"tx":24.6},{"f":"2026-02-01","p":0.0,"tm":21.3,"tn":17.8,"tx":26.8},{"f":"2026-02-02","p":0.0,"tm":25.0,"tn":17.0,"tx":32.5},{"f":"2026-02-03","p":1.6,"tm":25.0,"tn":19.1,"tx":31.3},{"f":"2026-02-04","p":1.6,"tm":20.2,"tn":16.6,"tx":22.3},{"f":"2026-02-05","p":14.6,"tm":17.3,"tn":16.2,"tx":18.5},{"f":"2026-02-06","p":27.7,"tm":19.4,"tn":15.3,"tx":24.6},{"f":"2026-02-07","p":0.0,"tm":23.0,"tn":15.8,"tx":30.3},{"f":"2026-02-08","p":0.0,"tm":25.3,"tn":18.4,"tx":31.9},{"f":"2026-02-09","p":0.0,"tm":21.5,"tn":15.9,"tx":27.5},{"f":"2026-02-10","p":0.1,"tm":23.7,"tn":13.1,"tx":31.9},{"f":"2026-02-11","p":0.0,"tm":19.6,"tn":14.4,"tx":24.5},{"f":"2026-02-12","p":0.0,"tm":18.6,"tn":12.2,"tx":24.9},{"f":"2026-02-13","p":0.0,"tm":19.2,"tn":12.0,"tx":25.4},{"f":"2026-02-14","p":0.0,"tm":22.1,"tn":14.2,"tx":28.8},{"f":"2026-02-15","p":0.1,"tm":21.1,"tn":16.3,"tx":28.8},{"f":"2026-02-16","p":0.1,"tm":21.9,"tn":13.6,"tx":30.6},{"f":"2026-02-17","p":0.1,"tm":23.2,"tn":17.5,"tx":32.1},{"f":"2026-02-18","p":0.0,"tm":24.0,"tn":17.2,"tx":31.8},{"f":"2026-02-19","p":0.0,"tm":19.9,"tn":15.8,"tx":24.1},{"f":"2026-02-20","p":0.0,"tm":21.1,"tn":13.0,"tx":29.5},{"f":"2026-02-21","p":0.0,"tm":20.3,"tn":16.2,"tx":26.2},{"f":"2026-02-22","p":0.1,"tm":20.4,"tn":16.7,"tx":27.4},{"f":"2026-02-23","p":0.0,"tm":22.2,"tn":15.8,"tx":30.9},{"f":"2026-02-24","p":0.3,"tm":19.8,"tn":14.1,"tx":24.8},{"f":"2026-02-25","p":0.0,"tm":16.6,"tn":11.6,"tx":23.0},{"f":"2026-02-26","p":0.0,"tm":18.0,"tn":13.5,"tx":23.4},{"f":"2026-02-27","p":0.0,"tm":21.7,"tn":13.9,"tx":28.4},{"f":"2026-02-28","p":0.0,"tm":22.1,"tn":16.0,"tx":29.5},{"f":"2026-03-01","p":0.0,"tm":24.5,"tn":17.1,"tx":31.8},{"f":"2026-03-02","p":45.6,"tm":25.3,"tn":15.3,"tx":33.1},{"f":"2026-03-03","p":0.3,"tm":18.4,"tn":14.6,"tx":23.3},{"f":"2026-03-04","p":0.0,"tm":20.6,"tn":14.0,"tx":26.7},{"f":"2026-03-05","p":5.5,"tm":18.1,"tn":14.4,"tx":20.0},{"f":"2026-03-06","p":0.0,"tm":16.9,"tn":12.3,"tx":22.1},{"f":"2026-03-07","p":0.0,"tm":19.7,"tn":13.3,"tx":26.6},{"f":"2026-03-08","p":30.6,"tm":15.9,"tn":12.1,"tx":18.5},{"f":"2026-03-09","p":0.1,"tm":18.0,"tn":9.2,"tx":26.7},{"f":"2026-03-10","p":3.9,"tm":18.2,"tn":14.1,"tx":25.9},{"f":"2026-03-11","p":0.0,"tm":20.6,"tn":14.1,"tx":27.9},{"f":"2026-03-12","p":0.0,"tm":21.7,"tn":16.0,"tx":27.4},{"f":"2026-03-13","p":9.5,"tm":21.1,"tn":15.9,"tx":29.4},{"f":"2026-03-14","p":14.9,"tm":19.5,"tn":15.0,"tx":25.7},{"f":"2026-03-15","p":0.0,"tm":23.2,"tn":17.9,"tx":29.0},{"f":"2026-03-16","p":0.4,"tm":18.7,"tn":14.3,"tx":23.3},{"f":"2026-03-17","p":1.0,"tm":17.2,"tn":12.1,"tx":19.7},{"f":"2026-03-18","p":0.0,"tm":19.8,"tn":10.1,"tx":29.5},{"f":"2026-03-19","p":0.0,"tm":23.6,"tn":18.4,"tx":29.7},{"f":"2026-03-20","p":4.3,"tm":16.7,"tn":15.0,"tx":20.7},{"f":"2026-03-21","p":18.8,"tm":13.2,"tn":8.9,"tx":19.1},{"f":"2026-03-22","p":0.0,"tm":17.0,"tn":5.7,"tx":26.0},{"f":"2026-03-23","p":0.0,"tm":14.1,"tn":9.6,"tx":20.9},{"f":"2026-03-24","p":0.0,"tm":19.5,"tn":9.4,"tx":27.9},{"f":"2026-03-25","p":0.0,"tm":15.0,"tn":9.5,"tx":21.7},{"f":"2026-03-26","p":0.0,"tm":18.0,"tn":10.3,"tx":25.1},{"f":"2026-03-27","p":0.0,"tm":22.0,"tn":17.4,"tx":28.0},{"f":"2026-03-28","p":0.0,"tm":23.8,"tn":19.8,"tx":30.4},{"f":"2026-03-29","p":0.0,"tm":25.3,"tn":19.2,"tx":32.7},{"f":"2026-03-30","p":0.0,"tm":26.8,"tn":20.4,"tx":33.4},{"f":"2026-03-31","p":0.0,"tm":27.8,"tn":21.1,"tx":33.8},{"f":"2026-04-01","p":14.8,"tm":21.6,"tn":19.2,"tx":25.0},{"f":"2026-04-02","p":0.0,"tm":24.2,"tn":18.0,"tx":28.4},{"f":"2026-04-03","p":9.6,"tm":20.1,"tn":17.7,"tx":24.4},{"f":"2026-04-04","p":0.2,"tm":13.4,"tn":10.5,"tx":18.0},{"f":"2026-04-05","p":3.2,"tm":11.0,"tn":9.2,"tx":14.0},{"f":"2026-04-06","p":3.6,"tm":10.9,"tn":9.6,"tx":12.2},{"f":"2026-04-07","p":1.3,"tm":10.8,"tn":6.8,"tx":15.2},{"f":"2026-04-08","p":0.0,"tm":11.4,"tn":3.8,"tx":18.9},{"f":"2026-04-09","p":0.1,"tm":13.4,"tn":4.4,"tx":22.8},{"f":"2026-04-10","p":0.0,"tm":17.6,"tn":12.5,"tx":24.0},{"f":"2026-04-11","p":0.3,"tm":17.2,"tn":12.6,"tx":22.0},{"f":"2026-04-12","p":0.0,"tm":19.3,"tn":13.9,"tx":26.6},{"f":"2026-04-13","p":0.0,"tm":18.9,"tn":11.3,"tx":25.6},{"f":"2026-04-14","p":0.0,"tm":19.4,"tn":15.6,"tx":25.4},{"f":"2026-04-15","p":0.3,"tm":17.1,"tn":11.6,"tx":22.6},{"f":"2026-04-16","p":0.1,"tm":17.9,"tn":10.7,"tx":27.3},{"f":"2026-04-17","p":28.1,"tm":17.3,"tn":13.8,"tx":23.0},{"f":"2026-04-18","p":0.0,"tm":20.4,"tn":12.1,"tx":26.5},{"f":"2026-04-19","p":22.9,"tm":13.3,"tn":9.2,"tx":18.8},{"f":"2026-04-20","p":30.5,"tm":8.7,"tn":8.1,"tx":9.6},{"f":"2026-04-21","p":1.1,"tm":10.7,"tn":7.3,"tx":15.9},{"f":"2026-04-22","p":0.0,"tm":11.7,"tn":5.3,"tx":18.7},{"f":"2026-04-23","p":0.0,"tm":14.6,"tn":7.1,"tx":23.6},{"f":"2026-04-24","p":0.0,"tm":17.4,"tn":11.7,"tx":24.2},{"f":"2026-04-25","p":5.3,"tm":11.8,"tn":6.2,"tx":15.7},{"f":"2026-04-26","p":0.0,"tm":9.3,"tn":-0.1,"tx":13.7},{"f":"2026-04-27","p":0.0,"tm":8.0,"tn":-3.0,"tx":19.7},{"f":"2026-04-28","p":0.0,"tm":14.9,"tn":8.7,"tx":23.3},{"f":"2026-04-29","p":0.0,"tm":16.0,"tn":9.3,"tx":23.6},{"f":"2026-04-30","p":0.0,"tm":16.7,"tn":6.9,"tx":25.1}],"heat_waves":[{"inicio":"2025-12-30","fin":"2026-01-01","dias":3,"tmax_pico":37.0},{"inicio":"2026-01-21","fin":"2026-01-23","dias":3,"tmax_pico":36.1}],"dry_spells":[{"inicio":"2025-09-01","fin":"2025-09-18","dias":18},{"inicio":"2025-09-28","fin":"2025-10-16","dias":19},{"inicio":"2025-11-16","fin":"2025-11-25","dias":10},{"inicio":"2025-12-23","fin":"2026-01-07","dias":16},{"inicio":"2026-01-14","fin":"2026-01-23","dias":10},{"inicio":"2026-02-07","fin":"2026-03-01","dias":23},{"inicio":"2026-03-22","fin":"2026-03-31","dias":10}],"kpi":{"precip_total":621.7,"mes_mas_seco":{"label":"2025-12","valor":25.7},"mes_mas_lluvioso":{"label":"2026-03","valor":134.9},"dias_estres_termico":12,"num_olas_calor":2,"num_rachas_secas":7,"racha_seca_max":23,"tmax_absoluto":{"valor":37.0,"fecha":"2025-12-31"},"tmin_absoluto":{"valor":-3.0,"fecha":"2026-04-27"},"fecha_inicio":"2025-09-01","fecha_fin":"2026-04-30","n_dias":241}};
+
+const fmt1 = (n) => n.toLocaleString('es-AR', {minimumFractionDigits:1, maximumFractionDigits:1});
+const fmt0 = (n) => n.toLocaleString('es-AR', {maximumFractionDigits:0});
+const fmtDateLong = (iso) => {
+  const [y,m,d] = iso.split('-');
+  const meses = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  return `${d} ${meses[parseInt(m,10)-1]} ${y}`;
+};
+const fmtDateShort = (iso) => {
+  const [y,m,d] = iso.split('-');
+  const meses = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  return `${d} ${meses[parseInt(m,10)-1]}`;
+};
+
+// ---------- Header meta ----------
+document.getElementById('meta-range').textContent =
+  `${fmtDateLong(DATA.kpi.fecha_inicio)} – ${fmtDateLong(DATA.kpi.fecha_fin)}`;
+document.getElementById('meta-days').textContent = DATA.kpi.n_dias;
+
+// ---------- KPI cards ----------
+const kpi = DATA.kpi;
+const kpiSection = document.getElementById('kpi-section');
+kpiSection.innerHTML = `
+  <div class="kpi water">
+    <p class="kpi-label">PRECIPITACIÓN TOTAL</p>
+    <p class="kpi-value">${fmt1(kpi.precip_total)} <span class="unit">mm</span></p>
+    <p class="kpi-sub">Acumulado de la campaña sobre ${kpi.n_dias} días. El mes más lluvioso fue ${monthLabelFromKey(kpi.mes_mas_lluvioso.label)} con ${fmt1(kpi.mes_mas_lluvioso.valor)} mm.</p>
+  </div>
+  <div class="kpi drought">
+    <p class="kpi-label">MES MÁS SECO</p>
+    <p class="kpi-value">${monthLabelFromKey(kpi.mes_mas_seco.label)}</p>
+    <p class="kpi-sub">Acumuló solo ${fmt1(kpi.mes_mas_seco.valor)} mm en el mes, muy por debajo del promedio mensual de ${fmt1(kpi.precip_total/8)} mm.</p>
+  </div>
+  <div class="kpi heat">
+    <p class="kpi-label">ESTRÉS TÉRMICO</p>
+    <p class="kpi-value">${kpi.dias_estres_termico} <span class="unit">días ≥35°C</span></p>
+    <p class="kpi-sub">Distribuidos en ${kpi.num_olas_calor} olas de calor (≥3 días consecutivos). Pico absoluto: ${fmt1(kpi.tmax_absoluto.valor)}°C el ${fmtDateShort(kpi.tmax_absoluto.fecha)}.</p>
+  </div>
+  <div class="kpi drought">
+    <p class="kpi-label">RACHAS SECAS</p>
+    <p class="kpi-value">${kpi.num_rachas_secas} <span class="unit">períodos</span></p>
+    <p class="kpi-sub">La más prolongada duró ${kpi.racha_seca_max} días consecutivos sin lluvias significativas (&lt;1 mm/día).</p>
+  </div>
+`;
+
+function monthLabelFromKey(ymKey){
+  const meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  const [y,m] = ymKey.split('-');
+  return `${meses[parseInt(m,10)-1]} ${y}`;
+}
+
+// ---------- Climograma (Chart.js) ----------
+const rootStyles = getComputedStyle(document.documentElement);
+const cssVar = (name) => rootStyles.getPropertyValue(name).trim();
+
+const months = DATA.monthly.map(m => m.label);
+const climogramaCanvas = document.getElementById('climograma');
+climogramaCanvas.setAttribute('aria-label',
+  `Climograma mensual de la estación Alzogaray, de ${monthLabelFromKey(kpi.fecha_inicio.slice(0,7))} a ${monthLabelFromKey(kpi.fecha_fin.slice(0,7))}. ` +
+  `Precipitación total ${fmt1(kpi.precip_total)} mm. Mes más lluvioso: ${monthLabelFromKey(kpi.mes_mas_lluvioso.label)} (${fmt1(kpi.mes_mas_lluvioso.valor)} mm). ` +
+  `Mes más seco: ${monthLabelFromKey(kpi.mes_mas_seco.label)} (${fmt1(kpi.mes_mas_seco.valor)} mm).`);
+
+// Meses áridos según el criterio de Gaussen (P mensual en mm < 2 × T media en °C),
+// un umbral bioclimático estándar para marcar déficit hídrico mes a mes.
+const aridMonths = DATA.monthly.map(m => m.precip < 2 * m.tmed);
+
+const aridBandPlugin = {
+  id: 'aridBand',
+  beforeDatasetsDraw(chart) {
+    const { ctx: c, chartArea, scales } = chart;
+    if (!chartArea) return;
+    const xScale = scales.x;
+    const n = DATA.monthly.length;
+    const bandWidth = xScale.width / n;
+    c.save();
+    c.fillStyle = cssVar('--drought-soft');
+    c.globalAlpha = 0.5;
+    aridMonths.forEach((isArid, i) => {
+      if (!isArid) return;
+      const centerX = xScale.getPixelForValue(i);
+      c.fillRect(centerX - bandWidth / 2, chartArea.top, bandWidth, chartArea.bottom - chartArea.top);
+    });
+    c.restore();
+  }
+};
+
+const ctx = climogramaCanvas.getContext('2d');
+new Chart(ctx, {
+  type: 'bar',
+  plugins: [aridBandPlugin],
+  data: {
+    labels: months,
+    datasets: [
+      {
+        type: 'bar',
+        label: 'Precipitación (mm)',
+        data: DATA.monthly.map(m => m.precip),
+        backgroundColor: cssVar('--water-soft'),
+        borderColor: cssVar('--water'),
+        borderWidth: 1.5,
+        borderRadius: 4,
+        yAxisID: 'y',
+        order: 3
+      },
+      {
+        type: 'line',
+        label: 'Temp. media (°C)',
+        data: DATA.monthly.map(m => m.tmed),
+        borderColor: cssVar('--ink-soft'),
+        backgroundColor: cssVar('--ink-soft'),
+        borderWidth: 2,
+        pointRadius: 3,
+        tension: 0.3,
+        yAxisID: 'y1',
+        order: 1
+      },
+      {
+        type: 'line',
+        label: 'Temp. máx. promedio (°C)',
+        data: DATA.monthly.map(m => m.tmax),
+        borderColor: cssVar('--heat'),
+        backgroundColor: cssVar('--heat'),
+        borderWidth: 2,
+        borderDash: [5,3],
+        pointRadius: 3,
+        tension: 0.3,
+        yAxisID: 'y1',
+        order: 1
+      },
+      {
+        type: 'line',
+        label: 'Temp. mín. promedio (°C)',
+        data: DATA.monthly.map(m => m.tmin),
+        borderColor: cssVar('--water'),
+        backgroundColor: cssVar('--water'),
+        borderWidth: 2,
+        borderDash: [5,3],
+        pointRadius: 3,
+        tension: 0.3,
+        yAxisID: 'y1',
+        order: 1
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: cssVar('--surface'),
+        titleColor: cssVar('--ink'),
+        bodyColor: cssVar('--ink-soft'),
+        borderColor: cssVar('--line'),
+        borderWidth: 1,
+        padding: 10,
+        titleFont: { family: "'IBM Plex Mono', monospace", size: 11 },
+        bodyFont: { family: "'IBM Plex Sans', sans-serif", size: 12 },
+        callbacks: {
+          label: (item) => {
+            const suffix = item.dataset.label.includes('Precip') ? ' mm' : ' °C';
+            return `${item.dataset.label}: ${item.formattedValue}${suffix}`;
+          }
+        }
+      }
+    },
+    scales: {
+      x: {
+        grid: { display: false },
+        ticks: { color: cssVar('--ink-soft'), font: { family: "'IBM Plex Mono', monospace", size: 11 } }
+      },
+      y: {
+        position: 'left',
+        title: { display: true, text: 'Precipitación (mm)', color: cssVar('--ink-faint'), font: { family: "'IBM Plex Sans', sans-serif", size: 11 } },
+        grid: { color: cssVar('--line') },
+        ticks: { color: cssVar('--ink-soft'), font: { size: 11 } },
+        beginAtZero: true
+      },
+      y1: {
+        position: 'right',
+        title: { display: true, text: 'Temperatura (°C)', color: cssVar('--ink-faint'), font: { family: "'IBM Plex Sans', sans-serif", size: 11 } },
+        grid: { display: false },
+        ticks: { color: cssVar('--ink-soft'), font: { size: 11 } }
+      }
+    }
+  }
+});
+
+// ---------- Calendario de alertas (heatmap día a día) ----------
+const calStart = new Date(kpi.fecha_inicio + 'T00:00:00');
+const calEnd = new Date(kpi.fecha_fin + 'T00:00:00');
+const CELL = 13, GAP = 3, STEP = CELL + GAP;
+
+const dailyByDate = {};
+DATA.daily.forEach(d => { dailyByDate[d.f] = d; });
+
+function inRange(dateStr, ranges){
+  return ranges.some(r => dateStr >= r.inicio && dateStr <= r.fin);
+}
+function toISO(d){ return d.toISOString().slice(0,10); }
+function getMonday(d){
+  const day = d.getDay();
+  const diff = (day === 0 ? -6 : 1 - day);
+  const nd = new Date(d);
+  nd.setDate(d.getDate() + diff);
+  nd.setHours(0,0,0,0);
+  return nd;
+}
+function hexToRgb(hex){
+  hex = hex.replace('#','');
+  if (hex.length === 3) hex = hex.split('').map(c => c+c).join('');
+  const num = parseInt(hex, 16);
+  return [(num>>16)&255, (num>>8)&255, num&255];
+}
+function lerpColor(c1, c2, t){
+  return [0,1,2].map(i => Math.round(c1[i] + (c2[i]-c1[i]) * t));
+}
+const cBase = hexToRgb(cssVar('--surface-2'));
+const cWater = hexToRgb(cssVar('--water'));
+function precipColor(mm){
+  const t = Math.min(mm / 20, 1);
+  const [r,g,b] = lerpColor(cBase, cWater, t);
+  return `rgb(${r}, ${g}, ${b})`;
+}
+
+const refMonday = getMonday(calStart);
+const grid = document.getElementById('calendar-grid');
+let cellsHtml = '';
+let maxWeekIndex = 0;
+const missingDates = [];
+let cursor = new Date(calStart);
+while (cursor <= calEnd) {
+  const iso = toISO(cursor);
+  const weekIndex = Math.floor((cursor - refMonday) / (7 * 86400000));
+  const dow = (cursor.getDay() + 6) % 7; // 0=Lun .. 6=Dom
+  maxWeekIndex = Math.max(maxWeekIndex, weekIndex);
+
+  const rec = dailyByDate[iso];
+  const isDry = inRange(iso, DATA.dry_spells);
+  const isHeat = inRange(iso, DATA.heat_waves);
+
+  let cls = 'cal-cell';
+  let style = `grid-column:${weekIndex+1};grid-row:${dow+1};`;
+  let title;
+
+  if (!rec) {
+    cls += ' nodata';
+    title = `${fmtDateLong(iso)} · sin datos`;
+    missingDates.push(iso);
+  } else {
+    if (isDry) { cls += ' dry'; }
+    else { style += `background:${precipColor(rec.p)};`; }
+    if (isHeat) cls += ' heat-ring';
+    const estado = isDry && isHeat ? 'racha seca + ola de calor' : isDry ? 'racha seca' : isHeat ? 'ola de calor' : 'normal';
+    title = `${fmtDateLong(iso)} · ${fmt1(rec.p)} mm · T°máx ${fmt1(rec.tx)}°C · ${estado}`;
+  }
+
+  cellsHtml += `<div class="${cls}" style="${style}" tabindex="0" role="img" aria-label="${title}" data-tip="${title}"></div>`;
+  cursor.setDate(cursor.getDate() + 1);
+}
+grid.innerHTML = cellsHtml;
+
+// Tooltip accesible por mouse, teclado y touch (los atributos "title" nativos
+// no responden a toques en móvil, por eso se resuelve con este overlay propio).
+const calTooltip = document.createElement('div');
+calTooltip.className = 'cal-tooltip';
+calTooltip.setAttribute('role', 'tooltip');
+calTooltip.hidden = true;
+document.body.appendChild(calTooltip);
+
+function positionCalTooltip(x, y){
+  const pad = 12;
+  calTooltip.style.left = '0px';
+  calTooltip.style.top = '0px';
+  calTooltip.hidden = false;
+  const rect = calTooltip.getBoundingClientRect();
+  let left = x + pad;
+  let top = y - rect.height - pad;
+  if (left + rect.width > window.innerWidth - 8) left = x - rect.width - pad;
+  if (top < 8) top = y + pad;
+  calTooltip.style.left = `${Math.max(8, left)}px`;
+  calTooltip.style.top = `${Math.max(8, top)}px`;
+}
+function showCalTooltip(cell, x, y){
+  const text = cell.getAttribute('data-tip');
+  if (!text) return;
+  calTooltip.textContent = text;
+  positionCalTooltip(x, y);
+}
+function hideCalTooltip(){ calTooltip.hidden = true; }
+
+grid.addEventListener('pointermove', (e) => {
+  if (e.pointerType && e.pointerType !== 'mouse') return;
+  const cell = e.target.closest('.cal-cell');
+  if (!cell) { hideCalTooltip(); return; }
+  showCalTooltip(cell, e.clientX, e.clientY);
+});
+grid.addEventListener('pointerleave', hideCalTooltip);
+grid.addEventListener('pointerup', (e) => {
+  if (e.pointerType !== 'touch') return;
+  const cell = e.target.closest('.cal-cell');
+  if (!cell) return;
+  e.preventDefault();
+  const r = cell.getBoundingClientRect();
+  showCalTooltip(cell, r.left + r.width / 2, r.top);
+});
+grid.addEventListener('focusin', (e) => {
+  const cell = e.target.closest('.cal-cell');
+  if (!cell) return;
+  const r = cell.getBoundingClientRect();
+  showCalTooltip(cell, r.left + r.width / 2, r.top);
+});
+grid.addEventListener('focusout', hideCalTooltip);
+document.addEventListener('pointerdown', (e) => {
+  if (!e.target.closest('.cal-cell')) hideCalTooltip();
+});
+grid.style.gridTemplateColumns = `repeat(${maxWeekIndex + 1}, ${CELL}px)`;
+
+// etiquetas de mes, alineadas a la columna donde arranca cada mes
+const calMonths = document.getElementById('cal-months');
+const mesesCortos = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+let monthCursor = new Date(calStart.getFullYear(), calStart.getMonth(), 1);
+let monthsHtml = '';
+while (monthCursor <= calEnd) {
+  const refDate = monthCursor < calStart ? calStart : monthCursor;
+  const wIndex = Math.floor((refDate - refMonday) / (7 * 86400000));
+  monthsHtml += `<span style="left:${wIndex * STEP}px">${mesesCortos[monthCursor.getMonth()]}</span>`;
+  monthCursor.setMonth(monthCursor.getMonth() + 1);
+}
+calMonths.innerHTML = monthsHtml;
+calMonths.style.width = `${(maxWeekIndex + 1) * STEP}px`;
+
+// etiquetas de día de semana (Lun / Mié / Vie)
+document.getElementById('cal-dow').innerHTML =
+  ['L','','X','','V','',''].map(l => `<span>${l}</span>`).join('');
+
+// leyenda
+document.getElementById('cal-legend').innerHTML = `
+  <div class="legend-item">
+    <span class="scale">
+      <span style="background:${precipColor(0)}"></span>
+      <span style="background:${precipColor(5)}"></span>
+      <span style="background:${precipColor(10)}"></span>
+      <span style="background:${precipColor(20)}"></span>
+    </span>
+    Intensidad de lluvia (0 → ≥20 mm/día)
+  </div>
+  <div class="legend-item"><span class="swatch" style="background:var(--drought)"></span>Racha seca activa</div>
+  <div class="legend-item"><span class="swatch" style="background:var(--surface-2);box-shadow:0 0 0 2px var(--heat) inset"></span>Día dentro de ola de calor</div>
+  <div class="legend-item"><span class="swatch" style="background:repeating-linear-gradient(45deg, var(--surface-2), var(--surface-2) 2px, var(--line) 2px, var(--line) 4px)"></span>Sin datos</div>
+`;
+
+// event list
+const eventList = document.getElementById('event-list');
+const allEvents = [
+  ...DATA.dry_spells.map(e => ({...e, kind: 'dry', label: 'Racha seca'})),
+  ...DATA.heat_waves.map(e => ({...e, kind: 'heatwave', label: 'Ola de calor'}))
+].sort((a,b) => new Date(a.inicio) - new Date(b.inicio));
+
+eventList.innerHTML = allEvents.map(ev => `
+  <li>
+    <span class="dot ${ev.kind}"></span>
+    <span><b>${ev.label}</b> · ${fmtDateShort(ev.inicio)} – ${fmtDateShort(ev.fin)} (${ev.dias} días)</span>
+  </li>
+`).join('');
+
+// ---------- Monthly table ----------
+const tbody = document.getElementById('monthly-body');
+tbody.innerHTML = DATA.monthly.map(m => `
+  <tr>
+    <td>${m.label}</td>
+    <td>${fmt1(m.precip)}</td>
+    <td>${fmt1(m.tmed)}</td>
+    <td>${fmt1(m.tmax)}</td>
+    <td>${fmt1(m.tmin)}</td>
+    <td>${fmt1(m.tmax_abs)}</td>
+    <td>${fmt1(m.tmin_abs)}</td>
+  </tr>
+`).join('');
+
+// ---------- Insights ----------
+const promedioMensual = kpi.precip_total / DATA.monthly.length;
+const insights = document.getElementById('insights-list');
+insights.innerHTML = `
+  <li>La campaña acumuló <b>${fmt1(kpi.precip_total)} mm</b> sobre ${kpi.n_dias} días, con una distribución muy irregular entre meses: <b>${monthLabelFromKey(kpi.mes_mas_lluvioso.label)}</b> concentró ${fmt1(kpi.mes_mas_lluvioso.valor)} mm, mientras que <b>${monthLabelFromKey(kpi.mes_mas_seco.label)}</b> —en pleno tramo estival— apenas aportó ${fmt1(kpi.mes_mas_seco.valor)} mm.</li>
+  <li>Se identificaron <b>${kpi.num_rachas_secas} rachas secas</b> de 10 días o más sin lluvias significativas. La más severa se extendió <b>${kpi.racha_seca_max} días consecutivos</b>, inmediatamente antes del repunte de precipitaciones de marzo.</li>
+  <li>El estrés térmico fue acotado: solo <b>${kpi.num_olas_calor} olas de calor</b> cumplieron el criterio de ≥3 días consecutivos con T°máx≥35°C, ambas de 3 días, concentradas entre fin de diciembre y fin de enero. La temperatura máxima absoluta del período fue <b>${fmt1(kpi.tmax_absoluto.valor)}°C</b> el ${fmtDateShort(kpi.tmax_absoluto.fecha)}.</li>
+  <li>Se registró una <b>helada tardía</b> el ${fmtDateShort(kpi.tmin_absoluto.fecha)} (T°mín ${fmt1(kpi.tmin_absoluto.valor)}°C), un evento fuera de temporada típica y relevante para cultivos sensibles a esa altura del ciclo.</li>
+  ${missingDates.length ? `<li>Se detectó${missingDates.length > 1 ? 'aron' : ''} <b>${missingDates.length} día${missingDates.length > 1 ? 's' : ''} sin registro</b> en la estación (${missingDates.map(fmtDateShort).join(', ')}), marcado${missingDates.length > 1 ? 's' : ''} con textura diagonal en el calendario y excluido${missingDates.length > 1 ? 's' : ''} de los promedios y del cómputo de rachas.</li>` : ''}
+  <li class="note">Nota metodológica: las rachas secas y olas de calor de este panel fueron recalculadas de forma independiente sobre los registros diarios (umbrales: T°máx≥35°C por ≥3 días; precipitación &lt;1 mm/día por ≥10 días). Las columnas de alerta del archivo original no se usaron como fuente, ya que el campo de "días" de sus mensajes de racha seca coincidía numéricamente con el monto de precipitación del día, lo que indica un error de fórmula en el origen.</li>
+`;
+</script>
+</body>
+</html>
