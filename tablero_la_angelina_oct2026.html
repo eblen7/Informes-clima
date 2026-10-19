@@ -1,0 +1,1525 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>La Angelina · 1 al 15 de octubre de 2026 · Tablero agrometeorológico</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8C%BE%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* =====================================================================
+   Tokens. Paleta de series validada (máx/mín) para daltonismo y contraste
+   en ambos temas. Sin librerías externas: los gráficos son SVG propios.
+   ===================================================================== */
+:root {
+  --bg: #F2F4EE; --surface: #FFFFFF; --surface-2: #E9ECE2;
+  --ink: #1B241E; --ink-soft: #566056; --ink-faint: #6B746A; --line: #D7DBCC;
+  --water: #1D5C8A; --water-soft: #DCEBF4;
+  --heat: #BC4310; --heat-soft: #F7DFCE;
+  --cold: #1A62A0;
+  --drought: #8A6A3C; --drought-soft: #EDE1C7;
+  --accent: #C98A1F;
+  --band: rgba(86, 96, 86, 0.13);
+  --on-strong: #FFFFFF;
+  --radius-s: 4px; --radius-m: 10px;
+  --shadow: 0 1px 2px rgba(27,36,30,0.06), 0 6px 20px -12px rgba(27,36,30,0.18);
+  --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --font-body: 'IBM Plex Sans', -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  --gutter: 24px;
+  --h-clima: 360px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #10140F; --surface: #171D16; --surface-2: #1E251C;
+    --ink: #EAEFE4; --ink-soft: #A8B4A2; --ink-faint: #879483; --line: #2A322A;
+    --water: #67AEE0; --water-soft: #1B3548;
+    --heat: #D9773F; --heat-soft: #3D2413;
+    --cold: #4A93C8;
+    --drought: #D3B47D; --drought-soft: #362A16;
+    --accent: #E9BE5F;
+    --band: rgba(168, 180, 162, 0.14);
+    --on-strong: #10140F;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -14px rgba(0,0,0,0.6);
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #10140F; --surface: #171D16; --surface-2: #1E251C;
+  --ink: #EAEFE4; --ink-soft: #A8B4A2; --ink-faint: #879483; --line: #2A322A;
+  --water: #67AEE0; --water-soft: #1B3548;
+  --heat: #D9773F; --heat-soft: #3D2413;
+  --cold: #4A93C8;
+  --drought: #D3B47D; --drought-soft: #362A16;
+  --accent: #E9BE5F;
+  --band: rgba(168, 180, 162, 0.14);
+  --on-strong: #10140F;
+  --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -14px rgba(0,0,0,0.6);
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font-family: var(--font-body); font-size: 15px; line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0) env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
+}
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 28px var(--gutter) 64px; }
+
+/* ---------- Encabezado ---------- */
+header.station {
+  display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between;
+  gap: 16px 24px; padding-bottom: 22px; margin-bottom: 28px; border-bottom: 1px solid var(--line);
+}
+.station-id { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.06em; color: var(--ink-faint); margin: 0 0 6px; }
+.station-title { font-family: var(--font-display); font-weight: 700; font-size: clamp(28px, 4.2vw, 44px); line-height: 1.08; margin: 0; }
+.station-title em { font-style: italic; font-weight: 500; color: var(--ink-soft); }
+.station-meta { text-align: right; font-family: var(--font-mono); font-size: 12.5px; color: var(--ink-soft); line-height: 1.7; }
+.station-meta .n { color: var(--ink); font-weight: 600; }
+.chip { display: inline-block; margin-top: 4px; padding: 2px 9px; border-radius: 999px; background: var(--surface-2); color: var(--ink-soft); font-size: 11.5px; }
+.btn-print {
+  margin-top: 10px; font: 500 12.5px var(--font-body); color: var(--ink); background: var(--surface);
+  border: 1px solid var(--line); border-radius: 8px; padding: 8px 14px; cursor: pointer; min-height: 40px;
+}
+.btn-print:hover { border-color: var(--ink-faint); }
+.btn-print:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+/* ---------- Secciones ---------- */
+.section-label {
+  font-family: var(--font-mono); font-size: 12px; font-weight: 500; letter-spacing: 0.05em; color: var(--ink-faint);
+  margin: 0 0 12px; display: flex; align-items: baseline; gap: 10px;
+}
+.section-label .rule { flex: 1; height: 1px; background: var(--line); }
+section { margin-bottom: 44px; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-m); padding: 20px 22px; box-shadow: var(--shadow); }
+
+/* ---------- KPIs ---------- */
+.kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.kpi { background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: var(--radius-m); padding: 18px 18px 16px; box-shadow: var(--shadow); min-width: 0; }
+.kpi.water { border-left-color: var(--water); }
+.kpi.heat { border-left-color: var(--heat); }
+.kpi.drought { border-left-color: var(--drought); }
+.kpi-label { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.05em; color: var(--ink-faint); margin: 0 0 10px; }
+.kpi-value { font-family: var(--font-display); font-weight: 600; font-size: clamp(24px, 2.4vw, 30px); line-height: 1.15; margin: 0 0 8px; overflow-wrap: anywhere; }
+.kpi-value .unit { font-size: 0.55em; color: var(--ink-soft); font-weight: 500; }
+.kpi-sub { font-size: 12.5px; color: var(--ink-soft); margin: 0; line-height: 1.5; }
+.kpi-sub + .kpi-sub { margin-top: 6px; }
+
+/* ---------- Gráficos SVG ---------- */
+.legend-row { display: flex; flex-wrap: wrap; gap: 10px 20px; margin: 0 0 14px; font-size: 12.5px; color: var(--ink-soft); }
+.legend-item { display: inline-flex; align-items: center; gap: 7px; }
+.swatch { width: 12px; height: 12px; border-radius: 3px; display: inline-block; flex: none; }
+.swatch.line { width: 18px; height: 3px; border-radius: 2px; }
+.swatch.dash { width: 18px; height: 0; border-top: 2px dashed currentColor; border-radius: 0; }
+.chart-title { font-size: 12px; font-weight: 600; color: var(--ink-soft); margin: 4px 0 2px; }
+.chart-holder { position: relative; width: 100%; }
+.chart-holder.h-clima { height: var(--h-clima); }
+.chart-holder svg { display: block; overflow: visible; max-width: 100%; height: auto; }   /* nunca se sale del contenedor */
+.chart-holder svg text { font-family: var(--font-mono); font-size: 11px; fill: var(--ink-faint); }
+.chart-holder svg text.dl { fill: var(--ink-soft); font-family: var(--font-body); font-size: 11.5px; font-weight: 500; }
+.chart-holder svg .hit { fill: transparent; cursor: crosshair; }
+
+.viz-tip {
+  position: fixed; z-index: 60; max-width: 260px; background: var(--ink); color: var(--bg);
+  font-family: var(--font-mono); font-size: 11.5px; line-height: 1.5; padding: 7px 10px;
+  border-radius: var(--radius-s); box-shadow: var(--shadow); pointer-events: none;
+}
+.viz-tip[hidden] { display: none; }
+.viz-tip b { font-weight: 600; }
+
+/* ---------- Calendario ---------- */
+.cal-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.cal-heat-inner { display: inline-block; }
+.cal-months { position: relative; height: 16px; margin: 0 0 4px 30px; font-family: var(--font-mono); font-size: 11px; color: var(--ink-faint); }
+.cal-months span { position: absolute; top: 0; white-space: nowrap; }
+.cal-row { display: flex; align-items: flex-start; }
+.cal-dow { display: grid; width: 24px; margin-right: 6px; font-family: var(--font-mono); font-size: 9px; color: var(--ink-faint); }
+.cal-dow span { display: flex; align-items: center; }
+.cal-grid { display: grid; }
+.cc { border-radius: 3px; background: var(--surface-2); position: relative; cursor: default; }
+.cc:focus-visible, .cc:hover { outline: 1.5px solid var(--ink); outline-offset: 1px; }
+
+.cal-blocks { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 340px)); gap: 18px 26px; }
+.cal-block h3 { font-family: var(--font-display); font-weight: 600; font-size: 16px; margin: 0 0 8px; }
+.cal-block .dow, .cal-block .days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
+.cal-block .dow span { font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-faint); text-align: center; padding-bottom: 2px; }
+.cm { aspect-ratio: 1 / 1; border-radius: 6px; background: var(--surface-2); position: relative; padding: 3px 4px; display: flex; flex-direction: column; justify-content: space-between; min-width: 0; }
+.cm .d { font-size: 11.5px; font-weight: 600; color: var(--ink); line-height: 1; }
+.cm .mm { font-family: var(--font-mono); font-size: 9.5px; color: var(--ink-soft); line-height: 1; text-align: right; }
+.cm.out { background: transparent; }
+.cm.out .d { color: var(--line); font-weight: 400; }
+.cm.blank { background: transparent; }
+.cm.strong .d, .cm.strong .mm, .cm.dry .d, .cm.dry .mm { color: var(--on-strong); }
+
+.nodata { background: repeating-linear-gradient(45deg, var(--surface-2), var(--surface-2) 2px, var(--line) 2px, var(--line) 4px) !important; }
+.dry { background: var(--drought) !important; }
+.hot { box-shadow: 0 0 0 1px var(--heat) inset; }
+.wave { box-shadow: 0 0 0 2px var(--heat) inset; }
+.fr::after { content: ''; position: absolute; top: 3px; right: 3px; width: 7px; height: 7px; border-radius: 50%; background: var(--cold); box-shadow: 0 0 0 1.5px var(--surface); }
+.fr-agro::after { content: ''; position: absolute; top: 3px; right: 3px; width: 7px; height: 7px; border-radius: 50%; background: var(--surface); box-shadow: 0 0 0 1.5px var(--cold) inset; }
+.cc.fr::after, .cc.fr-agro::after { top: 50%; left: 50%; right: auto; width: 5px; height: 5px; transform: translate(-50%, -50%); }
+
+.cal-legend { display: flex; flex-wrap: wrap; gap: 10px 20px; margin: 16px 2px 4px; font-size: 12px; color: var(--ink-soft); align-items: center; }
+.cal-legend .scale { display: inline-flex; gap: 2px; }
+.cal-legend .scale span { width: 11px; height: 11px; border-radius: 2px; display: inline-block; }
+.lg-cell { width: 14px; height: 14px; border-radius: 3px; background: var(--surface-2); position: relative; display: inline-block; flex: none; }
+.lg-cell.fr::after, .lg-cell.fr-agro::after { top: 50%; left: 50%; right: auto; width: 6px; height: 6px; transform: translate(-50%, -50%); }
+.scroll-hint { font-size: 11.5px; color: var(--ink-faint); margin: 6px 0 0; }
+
+.event-list { list-style: none; margin: 10px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 8px 16px; }
+.event-list li { font-size: 12.5px; color: var(--ink-soft); display: flex; gap: 8px; align-items: baseline; border-top: 1px solid var(--line); padding-top: 7px; }
+.event-list .dot { width: 8px; height: 8px; border-radius: 50%; flex: none; margin-top: 2px; }
+.dot.dry { background: var(--drought); } .dot.heat { background: var(--heat); }
+.dot.frost { background: var(--cold); } .dot.frost-agro { background: var(--surface); box-shadow: 0 0 0 1.5px var(--cold) inset; }
+.event-list b { color: var(--ink); font-weight: 600; }
+.event-list .empty { grid-column: 1 / -1; border-top: none; padding-top: 0; }
+
+/* ---------- Tabla resumen ---------- */
+.table-panel { padding: 8px 12px; }
+.table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+table.resumen { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; }
+table.resumen th, table.resumen td { text-align: right; padding: 9px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+table.resumen th:first-child, table.resumen td:first-child { text-align: left; position: sticky; left: 0; background: var(--surface); }
+table.resumen thead th { font-family: var(--font-mono); font-weight: 500; font-size: 11px; letter-spacing: 0.03em; color: var(--ink-faint); vertical-align: bottom; }
+table.resumen tbody td:first-child { font-weight: 600; font-family: var(--font-display); }
+table.resumen tbody tr:hover td { background: var(--surface-2); }
+table.resumen tr.incompleto td { color: var(--ink-faint); font-style: italic; }
+table.resumen tfoot td { font-weight: 600; border-bottom: none; border-top: 2px solid var(--line); }
+td .tag { display: inline-block; font: 500 11px var(--font-body); padding: 1px 7px; border-radius: 999px; margin-left: 4px; white-space: nowrap; }
+.tag.heat { background: var(--heat-soft); color: var(--ink); }
+.tag.dry { background: var(--drought-soft); color: var(--ink); }
+.tag.frost { background: var(--water-soft); color: var(--ink); }
+.tag.na { background: var(--surface-2); color: var(--ink-soft); }
+.mono { font-family: var(--font-mono); }
+.table-note { font-size: 12px; color: var(--ink-faint); margin: 8px 6px 4px; }
+
+/* ---------- Lectura ejecutiva ---------- */
+.insights { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-m); padding: 22px 24px; box-shadow: var(--shadow); }
+.insights ul { margin: 0; padding: 0 0 0 18px; }
+.insights li { margin-bottom: 12px; color: var(--ink-soft); }
+.insights li b { color: var(--ink); font-weight: 600; }
+.glosario { margin-top: 18px; padding-top: 16px; border-top: 1px dashed var(--line); }
+.glosario h3 { font-family: var(--font-mono); font-size: 11.5px; font-weight: 500; letter-spacing: 0.05em; color: var(--ink-faint); margin: 0 0 8px; }
+.glosario dl { margin: 0; display: grid; grid-template-columns: max-content 1fr; gap: 6px 14px; font-size: 13px; }
+.glosario dt { font-weight: 600; color: var(--ink); }
+.glosario dd { margin: 0; color: var(--ink-soft); }
+.nota-metodo { font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-faint); margin: 14px 0 0; }
+
+/* ---------- Avisos ---------- */
+.data-banner { background: var(--heat-soft); color: var(--ink); border: 1px solid var(--heat); border-radius: var(--radius-m); padding: 12px 16px; margin: 0 0 24px; font-size: 13px; }
+.data-banner[hidden] { display: none; }
+.data-banner ul { margin: 6px 0 0; padding-left: 18px; }
+.render-error { font-size: 13px; color: var(--ink-soft); background: var(--surface-2); border-radius: var(--radius-s); padding: 10px 12px; margin: 8px 0; }
+
+footer { margin-top: 40px; padding-top: 18px; border-top: 1px solid var(--line); font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-faint); }
+
+/* ---------- Tablet ---------- */
+@media (max-width: 1023px) {
+  :root { --gutter: 20px; --h-clima: 330px; }
+  .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+/* ---------- Celular ---------- */
+@media (max-width: 640px) {
+  :root { --gutter: 16px; --h-clima: 300px; }
+  body { font-size: 14.5px; }
+  .wrap { padding-top: 20px; }
+  header.station { margin-bottom: 20px; }
+  .station-meta { text-align: left; }
+  .kpis { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .kpi { padding: 14px 16px; }
+  section { margin-bottom: 32px; }
+  .panel { padding: 16px 14px; }
+  .insights { padding: 18px 16px; }
+  .glosario dl { grid-template-columns: 1fr; gap: 2px; }
+  .glosario dd { margin-bottom: 8px; }
+  .event-list { grid-template-columns: 1fr; }
+  .cal-blocks { grid-template-columns: minmax(0, 1fr); }
+}
+/* Tabla como fichas en tablet y celular (no afecta la impresión) */
+@media screen and (max-width: 900px) {
+  .table-panel { padding: 10px; background: transparent; border: none; box-shadow: none; }
+  table.resumen thead { display: none; }
+  table.resumen, table.resumen tbody, table.resumen tfoot { display: block; width: 100%; }
+  table.resumen tr { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 3px 18px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-m); padding: 10px 12px; margin-bottom: 10px; }
+  table.resumen td { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; border: none; padding: 2px 0; white-space: normal; text-align: right; position: static; background: transparent !important; }
+  table.resumen td::before { content: attr(data-label); font-family: var(--font-body); font-weight: 400; font-style: normal; font-size: 11.5px; color: var(--ink-faint); text-align: left; }
+  table.resumen td.c-main { grid-column: 1 / -1; font-size: 15px; padding-bottom: 4px; border-bottom: 1px solid var(--line); margin-bottom: 2px; }
+  table.resumen td.c-main::before { content: none; }
+  table.resumen td.c-wide { grid-column: 1 / -1; justify-content: flex-start; }
+  table.resumen td.c-wide::before { content: none; }
+  table.resumen tfoot tr { border-width: 2px; }
+  table.resumen td[data-label=""] { display: none; }
+  table.resumen tfoot td { border-top: none; }
+}
+
+/* ---------- Impresión A4 ---------- */
+@page { size: A4 portrait; margin: 12mm 12mm 14mm; @bottom-right { content: "Página " counter(page) " de " counter(pages); font: 9px sans-serif; color: #6B746A; } }
+@media print {
+  :root, :root[data-theme], :root:not([data-theme="light"]) {
+    --bg: #FFFFFF; --surface: #FFFFFF; --surface-2: #EEF0E8;
+    --ink: #1B241E; --ink-soft: #444C44; --ink-faint: #5E665D; --line: #CDD2C2;
+    --water: #1D5C8A; --water-soft: #DCEBF4; --heat: #BC4310; --heat-soft: #F7DFCE; --cold: #1A62A0;
+    --drought: #8A6A3C; --drought-soft: #EDE1C7; --accent: #C98A1F; --band: rgba(86,96,86,0.13);
+    --on-strong: #FFFFFF; --shadow: none;
+    --gutter: 0px; --h-clima: 290px;
+  }
+  html, body { background: #FFFFFF !important; }
+  body { font-size: 10.5pt; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .wrap { max-width: none; padding: 0; }
+  .btn-print, .scroll-hint, .viz-tip { display: none !important; }
+  header.station { margin-bottom: 16px; padding-bottom: 12px; }
+  .station-title { font-size: 26pt; }
+  section { margin-bottom: 18px; }
+  .kpis { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; break-inside: avoid; }
+  .kpi { padding: 10px 10px 9px; }
+  .kpi-value { font-size: 17pt; }
+  .kpi-sub { font-size: 8.5pt; }
+  .panel, .insights, .kpi, .cal-block, table.resumen tr, .event-list li, .glosario { break-inside: avoid; }
+  .panel, .insights { padding: 12px 14px; }
+  .section-label { break-after: avoid; }
+  .cal-scroll, .table-scroll { overflow: visible; }
+  .chart-holder.h-clima { height: auto; }
+  .cal-heat-inner { max-width: 100%; }
+  table.resumen { font-size: 8.5pt; }
+  table.resumen th, table.resumen td { padding: 5px 6px; }
+  table.resumen thead { display: table-header-group; }
+  .event-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .cal-blocks { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  footer { margin-top: 16px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="station">
+    <div>
+      <p class="station-id" id="station-id-text">ESTACIÓN AGROMETEOROLÓGICA · REGISTRO DIARIO</p>
+      <h1 class="station-title">La Angelina <em>· 1 al 15 de octubre de 2026</em></h1>
+    </div>
+    <div class="station-meta">
+      <div><span class="n" id="meta-range">—</span></div>
+      <div><span class="n" id="meta-days">—</span></div>
+      <div><span class="chip" id="meta-vista"></span></div>
+      <button class="btn-print" id="btn-print" type="button">Imprimir / Guardar PDF</button>
+    </div>
+  </header>
+
+  <noscript><p class="data-banner">Este informe necesita JavaScript habilitado para mostrar indicadores, gráficos y tablas.</p></noscript>
+  <div class="data-banner" id="data-banner" role="alert" hidden></div>
+
+  <section class="kpis" id="kpi-section" aria-label="Indicadores principales"></section>
+
+  <section id="sec-clima">
+    <h2 class="section-label"><span id="clima-title">CLIMOGRAMA</span><span class="rule"></span></h2>
+    <div class="panel">
+      <div class="legend-row" id="clima-legend"></div>
+      <div class="chart-holder h-clima" id="climograma"></div>
+      <p class="sr-only">Los valores exactos de cada período se detallan en la tabla de resumen.</p>
+    </div>
+  </section>
+
+  <section id="sec-cal">
+    <h2 class="section-label">CALENDARIO DE ALERTAS · DÍA A DÍA <span class="rule"></span></h2>
+    <div class="panel">
+      <div id="cal-wrap"></div>
+      <div class="cal-legend" id="cal-legend"></div>
+      <ul class="event-list" id="event-list"></ul>
+    </div>
+  </section>
+
+  <section id="sec-resumen">
+    <h2 class="section-label"><span id="resumen-title">RESUMEN</span><span class="rule"></span></h2>
+    <div class="panel table-panel">
+      <div class="table-scroll">
+        <table class="resumen" id="resumen-table">
+          <thead id="resumen-head"></thead>
+          <tbody id="resumen-body"></tbody>
+          <tfoot id="resumen-foot"></tfoot>
+        </table>
+      </div>
+      <p class="table-note" id="resumen-note"></p>
+    </div>
+  </section>
+
+  <section id="sec-lectura">
+    <h2 class="section-label">LECTURA EJECUTIVA <span class="rule"></span></h2>
+    <div class="insights">
+      <ul id="insights-list"></ul>
+      <div class="glosario" id="glosario"></div>
+      <p class="nota-metodo" id="nota-metodo"></p>
+    </div>
+  </section>
+
+  <footer>
+    Fuente: registro diario de la estación La Angelina. <span id="footer-note"></span> Panel generado con Claude.
+  </footer>
+</div>
+
+<div class="viz-tip" id="viz-tip" role="tooltip" hidden></div>
+
+<script>
+/* =====================================================================
+   Datos: los inyecta scripts/build_dashboard.py. NO editar a mano.
+   Ningún número, umbral ni juicio está escrito fijo en esta plantilla.
+   ===================================================================== */
+const METEO_DATA = {
+  "meta": {
+    "version": "2.2",
+    "nombre_estacion": "La Angelina",
+    "etiqueta_campania": "1 al 15 de octubre de 2026",
+    "identificador": "ESTACIÓN AGROMETEOROLÓGICA · REGISTRO DIARIO",
+    "generado": "2026-10-19",
+    "hemisferio": "sur",
+    "columnas_usadas": {
+      "fecha": "Etiquetas de fila",
+      "precip": "Suma de Precipitacion (mm)",
+      "tmin": "Mín. de Temperatura (ºC)3",
+      "tmed": "Promedio de Temperatura (ºC)",
+      "tmax": "Máx. de Temperatura (ºC)2"
+    },
+    "tmed_estimada": false,
+    "unidades_convertidas": {
+      "temp_desde_F": false,
+      "precip_desde_in": false
+    },
+    "umbrales": {
+      "heat_threshold": 35.0,
+      "heat_min_days": 3,
+      "dry_threshold": 5.0,
+      "dry_min_days": 10,
+      "frost_threshold": 0.0,
+      "agro_frost_threshold": 3.0,
+      "min_month_coverage": 0.9
+    },
+    "calidad": {
+      "filas_sin_fecha": [
+        "(en blanco)",
+        "Total general"
+      ],
+      "valores_descartados": [],
+      "trazas": 0,
+      "duplicados_identicos": [],
+      "extremos_plausibles": [],
+      "filas_cortas": 0,
+      "n_valores_descartados": 0
+    },
+    "nota_extra": "",
+    "vista": "corto"
+  },
+  "monthly": [
+    {
+      "label": "Oct 2026",
+      "label_largo": "Octubre 2026",
+      "inicio": "2026-10-01",
+      "fin": "2026-10-31",
+      "dias": 31,
+      "dias_p": 15,
+      "dias_t": 15,
+      "completo": false,
+      "precip": 153.5,
+      "tmed": 13.8,
+      "tmax": 18.4,
+      "tmin": 10.0,
+      "tmax_abs": 27.1,
+      "tmin_abs": 6.4,
+      "dias_calor": 0,
+      "heladas": 0,
+      "heladas_agro": 0,
+      "arido": null,
+      "ym": "2026-10"
+    }
+  ],
+  "resumen": {
+    "granularidad": "dia",
+    "filas": [
+      {
+        "label": "jue 1 oct",
+        "label_largo": "jue 1 oct 2026",
+        "inicio": "2026-10-01",
+        "fin": "2026-10-01",
+        "dias": 1,
+        "dias_p": 1,
+        "dias_t": 1,
+        "completo": true,
+        "precip": 0.1,
+        "tmed": 12.6,
+        "tmax": 19.4,
+        "tmin": 6.4,
+        "tmax_abs": 19.4,
+        "tmin_abs": 6.4,
+        "dias_calor": 0,
+        "heladas": 0,
+        "heladas_agro": 0,
+        "arido": null,
+        "falta": false,
+        "amplitud": 13.0
+      },
+      {
+        "label": "vie 2 oct",
+        "label_largo": "vie 2 oct 2026",
+        "inicio": "2026-10-02",
+        "fin": "2026-10-02",
+        "dias": 1,
+        "dias_p": 1,
+        "dias_t": 1,
+        "completo": true,
+        "precip": 0.0,
+        "tmed": 16.0,
+        "tmax": 23.5,
+        "tmin": 8.9,
+        "tmax_abs": 23.5,
+        "tmin_abs": 8.9,
+        "dias_calor": 0,
+        "heladas": 0,
+        "heladas_agro": 0,
+        "arido": null,
+        "falta": false,
+        "amplitud": 14.6
+      },
+      {
+        "label": "sáb 3 oct",
+        "label_largo": "sáb 3 oct 2026",
+        "inicio": "2026-10-03",
+        "fin": "2026-10-03",
+        "dias": 1,
+        "dias_p": 1,
+        "dias_t": 1,
+        "completo": true,
+        "precip": 0.4,
+        "tmed": 15.6,
+        "tmax": 22.5,
+        "tmin": 9.1,
+        "tmax_abs": 22.5,
+        "tmin_abs": 9.1,
+        "dias_calor": 0,
+        "heladas": 0,
+        "heladas_agro": 0,
+        "arido": null,
+        "falta": false,
+        "amplitud": 13.4
+      },
+      {
+        "label": "dom 4 oct",
+        "label_largo": "dom 4 oct 2026",
+        "inicio": "2026-10-04",
+        "fin": "2026-10-04",
+        "dias": 1,
+        "dias_p": 1,
+        "dias_t": 1,
+        "completo": true,
+        "precip": 0.0,
+        "tmed": 15.5,
+        "tmax": 26.3,
+        "tmin": 6.8,
+        "tmax_abs": 26.3,
+        "tmin_abs": 6.8,
+        "dias_calor": 0,
+        "heladas": 0,
+        "heladas_agro": 0,
+        "arido": null,
+        "falta": false,
+        "amplitud": 19.5
+      },
+      {
+        "label": "lun 5 oct",
+        "label_largo": "lun 5 oct 2026",
+        "inicio": "2026-10-05",
+        "fin": "2026-10-05",
+        "dias": 1,
+        "dias_p": 1,
+        "dias_t": 1,
+        "completo": true,
+        "precip": 0.4,
+        "tmed": 16.4,
+        "tmax": 22.2,
+        "tmin": 12.3,
+        "tmax_abs": 22.2,
+        "tmin_abs": 12.3,
+        "dias_calor": 0,
+        "heladas": 0,
+        "heladas_agro": 0,
+        "arido": null,
+        "falta": false,
+        "amplitud": 9.9
+      },
+      {
+        "label": "mar 6 oct",
+        "label_largo": "mar 6 oct 2026",
+        "inicio": "2026-10-06",
+        "fin": "2026-10-06",
+        "dias": 1,
+        "dias_p": 1,
+        "dias_t": 1,
+        "completo": true,
+        "precip": 41.1,
+        "tmed": 19.7,
+        "tmax": 27.1,
+        "tmin": 12.8,
+        "tmax_abs": 27.1,
+        "tmin_abs": 12.8,
+        "dias_calor": 0,
+        "heladas": 0,
+        "heladas_agro": 0,
+        "arido": null,
+        "falta": false,
+        "amplitud": 14.3
+      },
+      {
+        "label": "mié 7 oct",
+        "label_largo": "mié 7 oct 2026",
+        "inicio": "2026-10-07",
+        "fin": "2026-10-07",
+        "dias": 1,
+        "dias_p": 1,
+        "dias_t": 1,
+        "completo": true,
+        "precip": 77.8,
+        "tmed": 14.8,
+        "tmax": 17.4,
+        "tmin": 12.5,
+        "tmax_abs": 17.4,
+        "tmin_abs": 12.5,
+        "dias_calor": 0,
+        "heladas": 0,
+        "heladas_agro": 0,
+        "arido": null,
+        "falta": false,
+        "amplitud": 4.9
+      },
+      {
+        "label": "jue 8 oct",
+        "label_largo": "jue 8 oct 2026",
+        "inicio": "2026-10-08",
+        "fin": "2026-10-08",
+        "dias": 1,
+        "dias_p": 1,
+        "dias_t": 1,
+        "completo": true,
+        "precip": 0.9,
+        "tmed": 12.0,
+        "tmax": 14.1,
+        "tmin": 10.7,
+        "tmax_abs": 14.1,
+        "tmin_abs": 10.7,
+        "dias_calor": 0,
+        "heladas": 0,
+        "heladas_agro": 0,
+        "arido": null,
+        "falta": false,
+        "amplitud": 3.4
+      },
+      {
+        "label": "vie 9 oct",
+        "label_largo": "vie 9 oct 2026",
+        "inicio": "2026-10-09",
+        "fin": "2026-10-09",
+        "dias": 1,
+        "dias_p": 1,
+        "dias_t": 1,
+        "completo": true,
+        "precip": 3.3,
+        "tmed": 10.1,
+        "tmax": 10.7,
+        "tmin": 9.1,
+        "tmax_abs": 10.7,
+        "tmin_abs": 9.1,
+        "dias_calor": 0,
+        "heladas": 0,
+        "heladas_agro": 0,
+        "arido": null,
+        "falta": false,
+        "amplitud": 1.6
+      },
+      {
+        "label": "sáb 10 oct",
+        "label_largo": "sáb 10 oct 2026",
+        "inicio": "2026-10-10",
+        "fin": "2026-10-10",
+        "dias": 1,
+        "dias_p": 1,
+        "dias_t": 1,
+        "completo": true,
+        "precip": 1.5,
+        "tmed": 11.4,
+        "tmax": 15.2,
+        "tmin": 9.5,
+        "tmax_abs": 15.2,
+        "tmin_abs": 9.5,
+        "dias_calor": 0,
+        "heladas": 0,
+        "heladas_agro": 0,
+        "arido": null,
+        "falta": false,
+        "amplitud": 5.7
+      },
+      {
+        "label": "dom 11 oct",
+        "label_largo": "dom 11 oct 2026",
+        "inicio": "2026-10-11",
+        "fin": "2026-10-11",
+        "dias": 1,
+        "dias_p": 1,
+        "dias_t": 1,
+        "completo": true,
+        "precip": 0.3,
+        "tmed": 11.8,
+        "tmax": 15.6,
+        "tmin": 8.8,
+        "tmax_abs": 15.6,
+        "tmin_abs": 8.8,
+        "dias_calor": 0,
+        "heladas": 0,
+        "heladas_agro": 0,
+        "arido": null,
+        "falta": false,
+        "amplitud": 6.8
+      },
+      {
+        "label": "lun 12 oct",
+        "label_largo": "lun 12 oct 2026",
+        "inicio": "2026-10-12",
+        "fin": "2026-10-12",
+        "dias": 1,
+        "dias_p": 1,
+        "dias_t": 1,
+        "completo": true,
+        "precip": 9.0,
+        "tmed": 12.0,
+        "tmax": 13.8,
+        "tmin": 10.9,
+        "tmax_abs": 13.8,
+        "tmin_abs": 10.9,
+        "dias_calor": 0,
+        "heladas": 0,
+        "heladas_agro": 0,
+        "arido": null,
+        "falta": false,
+        "amplitud": 2.9
+      },
+      {
+        "label": "mar 13 oct",
+        "label_largo": "mar 13 oct 2026",
+        "inicio": "2026-10-13",
+        "fin": "2026-10-13",
+        "dias": 1,
+        "dias_p": 1,
+        "dias_t": 1,
+        "completo": true,
+        "precip": 9.6,
+        "tmed": 11.7,
+        "tmax": 13.1,
+        "tmin": 10.3,
+        "tmax_abs": 13.1,
+        "tmin_abs": 10.3,
+        "dias_calor": 0,
+        "heladas": 0,
+        "heladas_agro": 0,
+        "arido": null,
+        "falta": false,
+        "amplitud": 2.8
+      },
+      {
+        "label": "mié 14 oct",
+        "label_largo": "mié 14 oct 2026",
+        "inicio": "2026-10-14",
+        "fin": "2026-10-14",
+        "dias": 1,
+        "dias_p": 1,
+        "dias_t": 1,
+        "completo": true,
+        "precip": 8.9,
+        "tmed": 12.6,
+        "tmax": 16.2,
+        "tmin": 10.7,
+        "tmax_abs": 16.2,
+        "tmin_abs": 10.7,
+        "dias_calor": 0,
+        "heladas": 0,
+        "heladas_agro": 0,
+        "arido": null,
+        "falta": false,
+        "amplitud": 5.5
+      },
+      {
+        "label": "jue 15 oct",
+        "label_largo": "jue 15 oct 2026",
+        "inicio": "2026-10-15",
+        "fin": "2026-10-15",
+        "dias": 1,
+        "dias_p": 1,
+        "dias_t": 1,
+        "completo": true,
+        "precip": 0.2,
+        "tmed": 14.1,
+        "tmax": 19.3,
+        "tmin": 10.5,
+        "tmax_abs": 19.3,
+        "tmin_abs": 10.5,
+        "dias_calor": 0,
+        "heladas": 0,
+        "heladas_agro": 0,
+        "arido": null,
+        "falta": false,
+        "amplitud": 8.8
+      }
+    ]
+  },
+  "daily": [
+    {
+      "f": "2026-10-01",
+      "p": 0.1,
+      "tm": 12.61,
+      "tn": 6.4,
+      "tx": 19.4
+    },
+    {
+      "f": "2026-10-02",
+      "p": 0.0,
+      "tm": 16.03,
+      "tn": 8.9,
+      "tx": 23.5
+    },
+    {
+      "f": "2026-10-03",
+      "p": 0.4,
+      "tm": 15.62,
+      "tn": 9.1,
+      "tx": 22.5
+    },
+    {
+      "f": "2026-10-04",
+      "p": 0.0,
+      "tm": 15.47,
+      "tn": 6.8,
+      "tx": 26.3
+    },
+    {
+      "f": "2026-10-05",
+      "p": 0.4,
+      "tm": 16.38,
+      "tn": 12.3,
+      "tx": 22.2
+    },
+    {
+      "f": "2026-10-06",
+      "p": 41.1,
+      "tm": 19.66,
+      "tn": 12.8,
+      "tx": 27.1
+    },
+    {
+      "f": "2026-10-07",
+      "p": 77.8,
+      "tm": 14.81,
+      "tn": 12.5,
+      "tx": 17.4
+    },
+    {
+      "f": "2026-10-08",
+      "p": 0.9,
+      "tm": 12.05,
+      "tn": 10.7,
+      "tx": 14.1
+    },
+    {
+      "f": "2026-10-09",
+      "p": 3.3,
+      "tm": 10.06,
+      "tn": 9.1,
+      "tx": 10.7
+    },
+    {
+      "f": "2026-10-10",
+      "p": 1.5,
+      "tm": 11.41,
+      "tn": 9.5,
+      "tx": 15.2
+    },
+    {
+      "f": "2026-10-11",
+      "p": 0.3,
+      "tm": 11.84,
+      "tn": 8.8,
+      "tx": 15.6
+    },
+    {
+      "f": "2026-10-12",
+      "p": 9.0,
+      "tm": 11.96,
+      "tn": 10.9,
+      "tx": 13.8
+    },
+    {
+      "f": "2026-10-13",
+      "p": 9.6,
+      "tm": 11.7,
+      "tn": 10.3,
+      "tx": 13.1
+    },
+    {
+      "f": "2026-10-14",
+      "p": 8.9,
+      "tm": 12.62,
+      "tn": 10.7,
+      "tx": 16.2
+    },
+    {
+      "f": "2026-10-15",
+      "p": 0.2,
+      "tm": 14.12,
+      "tn": 10.5,
+      "tx": 19.3
+    }
+  ],
+  "heat_waves": [],
+  "dry_spells": [],
+  "frosts": [],
+  "kpi": {
+    "vista": "corto",
+    "granularidad": "dia",
+    "fecha_inicio": "2026-10-01",
+    "fecha_fin": "2026-10-15",
+    "n_dias_calendario": 15,
+    "n_dias": 15,
+    "n_dias_p": 15,
+    "n_dias_tx": 15,
+    "dias_faltantes": [],
+    "precip_total": 153.5,
+    "dias_con_lluvia": 5,
+    "dias_sin_lluvia": 10,
+    "lluvia_max_diaria": {
+      "valor": 77.8,
+      "fecha": "2026-10-07"
+    },
+    "unidades_incompletas": [],
+    "unidad_mas_seca": {
+      "label": "vie 2 oct 2026",
+      "valor": 0.0,
+      "n": 2,
+      "labels": [
+        "vie 2 oct 2026",
+        "dom 4 oct 2026"
+      ],
+      "inicio": "2026-10-02"
+    },
+    "unidad_mas_lluviosa": {
+      "label": "mié 7 oct 2026",
+      "valor": 77.8,
+      "n": 1,
+      "labels": [
+        "mié 7 oct 2026"
+      ],
+      "inicio": "2026-10-07"
+    },
+    "promedio_por_unidad": 10.2,
+    "meses_aridos": [],
+    "dias_estres_termico": 0,
+    "dias_en_olas": 0,
+    "num_olas_calor": 0,
+    "num_rachas_secas": 0,
+    "racha_seca_max": 0,
+    "racha_seca_max_evento": null,
+    "seguidilla_seca_max": {
+      "inicio": "2026-10-01",
+      "fin": "2026-10-05",
+      "dias": 5,
+      "borde_inicio": "serie",
+      "borde_fin": null
+    },
+    "num_heladas": 0,
+    "num_heladas_agro": 0,
+    "tmax_absoluto": {
+      "valor": 27.1,
+      "fecha": "2026-10-06"
+    },
+    "tmin_absoluto": {
+      "valor": 6.4,
+      "fecha": "2026-10-01"
+    }
+  }
+};
+
+const D = METEO_DATA, K = D.kpi, U = D.meta.umbrales, Q = D.meta.calidad;
+const VISTA = D.meta.vista;                 // 'corto' | 'intermedio' | 'campania'
+const GRAN = D.resumen.granularidad;        // 'dia' | 'decada' | 'mes'
+const FILAS = D.resumen.filas;
+
+/* ---------- utilidades ---------- */
+const esc = (s) => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ok = (n) => typeof n === 'number' && isFinite(n);
+const fmt1 = (n) => ok(n) ? n.toLocaleString('es-AR', {minimumFractionDigits:1, maximumFractionDigits:1}) : '—';
+const fmt0 = (n) => ok(n) ? n.toLocaleString('es-AR', {maximumFractionDigits:0}) : '—';
+const fmtU = (n) => n.toLocaleString('es-AR', {maximumFractionDigits:1});
+const plural = (n, s, p = s + 's') => (n === 1 ? s : p);
+const MESES_C = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+const MESES_L = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const DOW_C = ['dom','lun','mar','mié','jue','vie','sáb'];
+const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+const fmtDateLong = (iso) => { const [y,m,d] = iso.split('-'); return `${+d} ${MESES_C[+m-1]} ${y}`; };
+const fmtDateShort = (iso) => { const [, m, d] = iso.split('-'); return `${+d} ${MESES_C[+m-1]}`; };
+const listaHumana = (arr) => arr.length <= 1 ? arr.join('') : arr.slice(0,-1).join(', ') + ' y ' + arr[arr.length-1];
+const HELADA_EST = { 'otoño': 'otoñal (temprana)', 'primavera': 'primaveral (tardía)', 'invierno': 'invernal', 'verano': 'estival (atípica)' };
+const UNIDAD = {
+  dia:    { s: 'día',    p: 'días',    seco: 'DÍA MÁS SECO',   secos: 'DÍAS MÁS SECOS',   lluv: 'día más lluvioso',   gen: 'm', titulo: 'DIARIO' },
+  decada: { s: 'década', p: 'décadas', seco: 'DÉCADA MÁS SECA', secos: 'DÉCADAS MÁS SECAS', lluv: 'década más lluviosa', gen: 'f', titulo: 'POR DÉCADAS' },
+  mes:    { s: 'mes',    p: 'meses',   seco: 'MES MÁS SECO',   secos: 'MESES MÁS SECOS',  lluv: 'mes más lluvioso',   gen: 'm', titulo: 'MENSUAL' },
+}[GRAN];
+const DAY = 86400000;
+const isoToT = (iso) => { const [y,m,d] = iso.split('-').map(Number); return Date.UTC(y, m - 1, d); };
+const tToIso = (t) => new Date(t).toISOString().slice(0, 10);
+const dowMon = (t) => (new Date(t).getUTCDay() + 6) % 7;
+const inRange = (iso, ranges) => ranges.some(r => iso >= r.inicio && iso <= r.fin);
+const bordeAbierto = (ev) => !!(ev && (ev.borde_inicio || ev.borde_fin));
+const notaBorde = (ev) => {
+  const partes = [];
+  if (ev.borde_inicio === 'serie') partes.push('ya venía del período anterior');
+  if (ev.borde_inicio === 'hueco') partes.push('empieza después de un día sin dato');
+  if (ev.borde_fin === 'serie') partes.push('seguía al cierre del período');
+  if (ev.borde_fin === 'hueco') partes.push('se corta por un día sin dato');
+  return partes.length ? ` (${partes.join('; ')}: pudo durar más)` : '';
+};
+const daily = {}; D.daily.forEach(d => { daily[d.f] = d; });
+const frostByDate = {}; D.frosts.forEach(f => { frostByDate[f.fecha] = f; });
+const isPrint = () => window.matchMedia('print').matches;
+const bp = () => isPrint() ? 'print' : (window.innerWidth <= 640 ? 'movil' : window.innerWidth <= 1023 ? 'tablet' : 'pc');
+
+function seccion(containerId, fn) {
+  try { fn(); }
+  catch (err) {
+    console.error(`[informe] Error en ${containerId}:`, err);
+    const el = document.getElementById(containerId);
+    if (el) el.insertAdjacentHTML('beforeend', `<p class="render-error">No se pudo dibujar esta sección (${esc(err.message)}). El resto del informe no se ve afectado.</p>`);
+  }
+}
+
+/* ---------- tooltip compartido (mouse, toque y teclado) ---------- */
+const tip = document.getElementById('viz-tip');
+function showTip(html, x, y) {
+  tip.innerHTML = html; tip.hidden = false;
+  tip.style.left = '0px'; tip.style.top = '0px';
+  const r = tip.getBoundingClientRect();
+  let left = x + 14, top = y - r.height - 12;
+  if (left + r.width > window.innerWidth - 8) left = x - r.width - 14;
+  if (top < 8) top = y + 16;
+  tip.style.left = `${Math.max(8, left)}px`; tip.style.top = `${Math.max(8, top)}px`;
+}
+function hideTip() { tip.hidden = true; }
+document.addEventListener('pointerdown', (e) => { if (!e.target.closest('[data-tip], .hit')) hideTip(); });
+window.addEventListener('scroll', hideTip, { passive: true });
+
+/* ---------- auditoría visible (detecta ediciones manuales del HTML) ---------- */
+seccion('data-banner', () => {
+  const p = [];
+  if (D.daily.length !== K.n_dias) p.push(`Registros diarios (${D.daily.length}) ≠ kpi.n_dias (${K.n_dias}).`);
+  const sumaR = FILAS.reduce((a, f) => a + (ok(f.precip) ? f.precip : 0), 0);
+  if (Math.abs(sumaR - K.precip_total) > 0.05 * FILAS.length + 0.05) p.push(`Suma del resumen (${fmt1(sumaR)}) ≠ total (${fmt1(K.precip_total)}).`);
+  if (D.heat_waves.length !== K.num_olas_calor) p.push('Cantidad de olas de calor inconsistente.');
+  if (D.dry_spells.length !== K.num_rachas_secas) p.push('Cantidad de rachas secas inconsistente.');
+  if (D.frosts.length !== K.num_heladas_agro) p.push('Cantidad de heladas inconsistente.');
+  if (p.length) {
+    const b = document.getElementById('data-banner');
+    b.innerHTML = `<b>Atención: los datos de este informe no son internamente consistentes.</b> No usar estas cifras hasta regenerarlo con el script.<ul>${p.map(x => `<li>${esc(x)}</li>`).join('')}</ul>`;
+    b.hidden = false;
+  }
+});
+
+/* ---------- encabezado ---------- */
+seccion('meta-range', () => {
+  document.getElementById('station-id-text').textContent = D.meta.identificador;
+  document.getElementById('meta-range').textContent = `${fmtDateLong(K.fecha_inicio)} – ${fmtDateLong(K.fecha_fin)}`;
+  document.getElementById('meta-days').textContent =
+    `${fmt0(K.n_dias)} ${plural(K.n_dias, 'día', 'días')} con registro` + (K.dias_faltantes.length ? ` de ${fmt0(K.n_dias_calendario)}` : '');
+  const nMeses = D.monthly.length;
+  document.getElementById('meta-vista').textContent = {
+    corto: `Informe diario · ${K.n_dias_calendario} ${plural(K.n_dias_calendario, 'día', 'días')}`,
+    intermedio: `Informe por décadas · ${K.n_dias_calendario} días`,
+    campania: `Informe de campaña · ${nMeses} meses`,
+  }[VISTA];
+  document.getElementById('btn-print').addEventListener('click', () => window.print());
+  document.getElementById('clima-title').textContent = `CLIMOGRAMA ${UNIDAD.titulo}`;
+  document.getElementById('resumen-title').textContent = `RESUMEN ${UNIDAD.titulo}`;
+});
+
+/* ---------- KPIs (estructura fija de 4 cuadros; el contenido se adapta al período) ---------- */
+seccion('kpi-section', () => {
+  const tx = K.tmax_absoluto;
+  const aislados = Math.max(0, K.dias_estres_termico - K.dias_en_olas);
+
+  // 1. Precipitación total
+  const lm = K.lluvia_max_diaria;
+  const kPrecip = `
+    <div class="kpi water">
+      <p class="kpi-label">PRECIPITACIÓN TOTAL</p>
+      <p class="kpi-value">${fmt1(K.precip_total)} <span class="unit">mm</span></p>
+      <p class="kpi-sub">${K.dias_con_lluvia} ${plural(K.dias_con_lluvia,'día','días')} con lluvia (≥${fmtU(U.dry_threshold)} mm) de ${fmt0(K.n_dias_p)} con dato.</p>
+      ${lm ? `<p class="kpi-sub">Máxima en un día: ${fmt1(lm.valor)} mm el ${fmtDateShort(lm.fecha)}.</p>` : ''}
+    </div>`;
+
+  // 2. Mes / década / día más seco
+  const s = K.unidad_mas_seca, prom = K.promedio_por_unidad;
+  let kSeco;
+  if (!s) {
+    kSeco = `<div class="kpi drought"><p class="kpi-label">${UNIDAD.seco}</p><p class="kpi-value">—</p>
+      <p class="kpi-sub">Ningún${UNIDAD.gen === 'f' ? 'a' : ''} ${UNIDAD.s} tiene al menos ${fmt0(U.min_month_coverage * 100)} % de días con dato; no se comparan períodos parciales.</p></div>`;
+  } else if (GRAN === 'dia' && s.valor === 0 && s.n === K.n_dias_p) {
+    kSeco = `<div class="kpi drought"><p class="kpi-label">${UNIDAD.secos}</p>
+      <p class="kpi-value">Sin lluvia</p>
+      <p class="kpi-sub">Los ${K.n_dias_p} días con dato registraron 0,0 mm.</p></div>`;
+  } else if (s.n > 1) {
+    const lista = s.labels.map(l => GRAN === 'dia' ? l.replace(/ \d{4}$/, '') : l);
+    const txt = lista.length > 6 ? `${lista.slice(0, 5).join(', ')} y ${lista.length - 5} más` : listaHumana(lista);
+    kSeco = `<div class="kpi drought"><p class="kpi-label">${UNIDAD.secos}</p>
+      <p class="kpi-value">${s.n} <span class="unit">${UNIDAD.p} con ${fmt1(s.valor)} mm</span></p>
+      <p class="kpi-sub">${esc(txt)}.</p></div>`;
+  } else {
+    const comp = GRAN !== 'dia' && ok(prom) && prom > 0
+      ? `, el ${fmt0(100 * s.valor / prom)} % del promedio por ${UNIDAD.s} (${fmt1(prom)} mm)` : '';
+    kSeco = `<div class="kpi drought"><p class="kpi-label">${UNIDAD.seco}</p>
+      <p class="kpi-value">${esc(GRAN === 'dia' ? s.label.replace(/ \d{4}$/, '') : s.label)}</p>
+      <p class="kpi-sub">${fmt1(s.valor)} mm${comp}.</p></div>`;
+  }
+
+  // 3. Estrés térmico (calor + heladas)
+  const calorTxt = K.dias_estres_termico === 0 ? `Ningún día llegó a ${fmtU(U.heat_threshold)} °C.` :
+    (K.num_olas_calor ? `${K.dias_en_olas} en ${K.num_olas_calor} ${plural(K.num_olas_calor,'ola de calor','olas de calor')} (≥${U.heat_min_days} días seguidos)${aislados ? `; ${aislados} ${plural(aislados,'aislado','aislados')}` : ''}.`
+                      : `Ninguno formó una ola de calor (≥${U.heat_min_days} días seguidos).`);
+  const heladaTxt = K.num_heladas_agro === 0
+    ? `Sin heladas: la mínima no bajó de ${fmtU(U.agro_frost_threshold)} °C.`
+    : `Heladas: ${K.num_heladas_agro} ${plural(K.num_heladas_agro,'agronómica','agronómicas')} (≤${fmtU(U.agro_frost_threshold)} °C), ${K.num_heladas === 0 ? 'ninguna' : `${K.num_heladas} de ellas`} meteorológica${K.num_heladas === 1 ? '' : 's'} (≤${fmtU(U.frost_threshold)} °C).`;
+  const kCalor = `
+    <div class="kpi heat">
+      <p class="kpi-label">ESTRÉS TÉRMICO</p>
+      <p class="kpi-value">${fmt0(K.dias_estres_termico)} <span class="unit">${plural(K.dias_estres_termico,'día','días')} ≥${fmtU(U.heat_threshold)} °C</span></p>
+      <p class="kpi-sub">${calorTxt}${tx ? ` Máxima: ${fmt1(tx.valor)} °C el ${fmtDateShort(tx.fecha)}.` : ''}</p>
+      <p class="kpi-sub">${heladaTxt}</p>
+    </div>`;
+
+  // 4. Rachas secas (si el período es más corto que una racha, se muestra la seguidilla seca)
+  const rm = K.racha_seca_max_evento, sg = K.seguidilla_seca_max;
+  let kRacha;
+  if (K.n_dias_calendario < U.dry_min_days) {
+    kRacha = `<div class="kpi drought"><p class="kpi-label">RACHAS SECAS</p>
+      <p class="kpi-value">${sg ? sg.dias : 0} <span class="unit">${plural(sg ? sg.dias : 0,'día seguido','días seguidos')} sin lluvia</span></p>
+      <p class="kpi-sub">${sg ? `Del ${fmtDateShort(sg.inicio)} al ${fmtDateShort(sg.fin)}${bordeAbierto(sg) ? ' (pudo durar más)' : ''}. ` : ''}Una racha seca se cuenta desde ${U.dry_min_days} días seguidos y el período tiene ${K.n_dias_calendario}.</p></div>`;
+  } else {
+    kRacha = `<div class="kpi drought"><p class="kpi-label">RACHAS SECAS</p>
+      <p class="kpi-value">${fmt0(K.num_rachas_secas)} <span class="unit">${plural(K.num_rachas_secas,'período','períodos')}</span></p>
+      <p class="kpi-sub">${rm ? `La más larga: ${rm.dias} días (${fmtDateShort(rm.inicio)} – ${fmtDateShort(rm.fin)})${bordeAbierto(rm) ? ', pudo durar más' : ''}.`
+        : `Ningún período de ≥${U.dry_min_days} días seguidos con &lt;${fmtU(U.dry_threshold)} mm/día.${sg ? ` La seguidilla seca más larga fue de ${sg.dias} ${plural(sg.dias,'día','días')}.` : ''}`}</p></div>`;
+  }
+  document.getElementById('kpi-section').innerHTML = kPrecip + kSeco + kCalor + kRacha;
+});
+
+/* =====================================================================
+   Climograma (estructura original): barras de precipitación (eje izquierdo)
+   y líneas de temperatura media, máxima y mínima (eje derecho) en un mismo
+   gráfico. Dibujado en SVG propio: funciona sin internet, toma los colores
+   del tema y se redibuja al cambiar el ancho del dispositivo o al imprimir.
+   ===================================================================== */
+const SVGNS = 'http://www.w3.org/2000/svg';
+function sv(tag, attrs, parent) {
+  const e = document.createElementNS(SVGNS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(e);
+  return e;
+}
+function niceTicks(min, max, count) {
+  if (min === max) { min -= 1; max += 1; }
+  const raw = (max - min) / count, mag = Math.pow(10, Math.floor(Math.log10(raw))), n = raw / mag;
+  const step = (n < 1.5 ? 1 : n < 3 ? 2 : n < 7 ? 5 : 10) * mag;
+  const lo = Math.floor(min / step) * step, hi = Math.ceil(max / step) * step, ticks = [];
+  for (let v = lo; v <= hi + step / 2; v += step) ticks.push(+v.toFixed(6));
+  return { lo, hi, ticks };
+}
+function xLabel(f, i) {
+  if (GRAN === 'mes') return `${cap(MESES_C[+f.inicio.slice(5,7) - 1])} ${f.inicio.slice(2,4)}`;
+  if (GRAN === 'decada') { const d = +f.inicio.slice(8,10); return `${d === 1 ? '1ª' : d === 11 ? '2ª' : '3ª'} ${MESES_C[+f.inicio.slice(5,7) - 1]}`; }
+  const t = isoToT(f.inicio), d = +f.inicio.slice(8,10);
+  return VISTA === 'corto' ? `${DOW_C[new Date(t).getUTCDay()]} ${d}` : (d === 1 || i === 0 ? `${d} ${MESES_C[+f.inicio.slice(5,7) - 1]}` : `${d}`);
+}
+function smoothPath(pts) {
+  // curva suave equivalente a la "tensión 0.3" del climograma original
+  if (!pts.length) return '';
+  let d = `M${pts[0][0]},${pts[0][1]}`;
+  if (pts.length === 1) return d;
+  const k = 0.15;
+  for (let i = 0; i < pts.length - 1; i++) {
+    const p0 = pts[i - 1] || pts[i], p1 = pts[i], p2 = pts[i + 1], p3 = pts[i + 2] || p2;
+    d += ` C${p1[0] + (p2[0] - p0[0]) * k},${p1[1] + (p2[1] - p0[1]) * k} ${p2[0] - (p3[0] - p1[0]) * k},${p2[1] - (p3[1] - p1[1]) * k} ${p2[0]},${p2[1]}`;
+  }
+  return d;
+}
+function hoverLayer(fr, n, tipFn) {
+  const cross = sv('line', { y1: fr.m.t, y2: fr.m.t + fr.ph, stroke: 'var(--ink-faint)', 'stroke-width': 1, 'stroke-dasharray': '3 3', visibility: 'hidden' }, fr.svg);
+  const g = sv('g', {}, fr.svg);
+  for (let i = 0; i < n; i++) {
+    const r = sv('rect', { class: 'hit', x: fr.m.l + fr.bw * i, y: fr.m.t, width: fr.bw, height: fr.ph }, g);
+    const show = (e) => {
+      cross.setAttribute('x1', fr.x(i)); cross.setAttribute('x2', fr.x(i)); cross.setAttribute('visibility', 'visible');
+      const bb = r.getBoundingClientRect();
+      showTip(tipFn(i), e && e.clientX != null && e.pointerType === 'mouse' ? e.clientX : bb.left + bb.width / 2, e && e.clientY != null && e.pointerType === 'mouse' ? e.clientY : bb.top + 20);
+    };
+    r.addEventListener('pointerenter', show); r.addEventListener('pointermove', show); r.addEventListener('pointerdown', show);
+  }
+  fr.svg.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') { cross.setAttribute('visibility', 'hidden'); hideTip(); } });
+}
+function tipHtml(i) {
+  const f = FILAS[i];
+  const head = GRAN === 'dia' ? f.label_largo : f.label_largo + (f.completo ? '' : ` · incompleto (${f.dias_p}/${f.dias} días)`);
+  const lines = [`<b>${esc(head)}</b>`, `Lluvia: ${f.precip == null ? 's/d' : fmt1(f.precip) + ' mm'}`];
+  if (GRAN === 'dia') {
+    lines.push(`T° máx: ${f.tmax == null ? 's/d' : fmt1(f.tmax) + ' °C'} · mín: ${f.tmin == null ? 's/d' : fmt1(f.tmin) + ' °C'}`);
+    if (f.tmed != null) lines.push(`T° media: ${fmt1(f.tmed)} °C`);
+  } else {
+    lines.push(`T° máx prom.: ${fmt1(f.tmax)} °C · mín prom.: ${fmt1(f.tmin)} °C`, `T° media: ${fmt1(f.tmed)} °C`,
+               `Extremas: ${fmt1(f.tmax_abs)} / ${fmt1(f.tmin_abs)} °C`);
+    if (f.arido === true) lines.push('Mes árido (Gaussen)');
+  }
+  return lines.join('<br>');
+}
+
+function drawClimograma() {
+  const holder = document.getElementById('climograma');
+  holder.innerHTML = '';
+  const n = FILAS.length;
+  const W = Math.max(260, Math.floor(holder.clientWidth || 600)), H = Math.max(200, Math.floor(holder.clientHeight || 360));
+  const compact = W < 480;
+  const m = { l: compact ? 46 : 60, r: compact ? 44 : 58, t: 12, b: 26 };
+  const pw = W - m.l - m.r, ph = H - m.t - m.b, bw = pw / n;
+  const x = (i) => m.l + bw * (i + 0.5);
+
+  // Eje izquierdo: precipitación (desde 0)
+  const precs = FILAS.map(f => f.precip);
+  const pmax = Math.max(1, ...precs.filter(ok));
+  const pt = niceTicks(0, pmax, ph < 280 ? 4 : 5);
+  const yP = (v) => m.t + ph - (v / pt.hi) * ph;
+  // Eje derecho: temperatura con escala propia (como el original; la grilla es la del eje izquierdo)
+  const temps = FILAS.flatMap(f => [f.tmax, f.tmin, f.tmed]).filter(ok);
+  const tt = temps.length ? niceTicks(Math.min(...temps) - 1, Math.max(...temps) + 1, ph < 280 ? 4 : 5) : null;
+  const yT = (v) => m.t + ph - ((v - tt.lo) / (tt.hi - tt.lo)) * ph;
+
+  const svg = sv('svg', { width: W, height: H, viewBox: `0 0 ${W} ${H}`, role: 'img',
+    'aria-label': `Climograma ${UNIDAD.titulo.toLowerCase()} de ${D.meta.nombre_estacion}: precipitación en barras (eje izquierdo) y temperaturas media, máxima y mínima en líneas (eje derecho). Total ${fmt1(K.precip_total)} mm.` }, holder);
+
+  // Banda de mes árido (Gaussen), solo en la vista de campaña
+  if (VISTA === 'campania') FILAS.forEach((f, i) => {
+    if (f.arido === true) sv('rect', { x: m.l + bw * i, y: m.t, width: bw, height: ph, fill: 'var(--drought-soft)', opacity: 0.5 }, svg);
+  });
+
+  // Grilla (del eje izquierdo) y valores de ambos ejes
+  pt.ticks.forEach((v) => {
+    const yy = yP(v);
+    sv('line', { x1: m.l, x2: W - m.r, y1: yy, y2: yy, stroke: 'var(--line)', 'stroke-width': 1 }, svg);
+    const tl = sv('text', { x: m.l - 6, y: yy + 4, 'text-anchor': 'end' }, svg); tl.textContent = fmtU(v);
+  });
+  if (tt) tt.ticks.forEach((v) => {
+    const tr = sv('text', { x: W - m.r + 6, y: yT(v) + 4, 'text-anchor': 'start' }, svg); tr.textContent = fmtU(v);
+  });
+  const titulo = (txt, xx, rot) => { const t = sv('text', { x: 0, y: 0, 'text-anchor': 'middle', transform: `translate(${xx},${m.t + ph / 2}) rotate(${rot})`, style: 'font-family:var(--font-body);font-size:11px' }, svg); t.textContent = txt; };
+  titulo('Precipitación (mm)', compact ? 10 : 13, -90);
+  if (tt) titulo('Temperatura (°C)', W - (compact ? 8 : 11), 90);
+
+  // Barras de precipitación (relleno suave + borde, esquinas superiores redondeadas, como el original)
+  const w = Math.min(64, Math.max(2, bw * (n > 40 ? 0.75 : 0.7))), base = yP(0);
+  FILAS.forEach((f, i) => {
+    const x0 = x(i) - w / 2;
+    if (f.precip == null) { const t = sv('text', { x: x(i), y: base - 4, 'text-anchor': 'middle', style: 'font-size:9px' }, svg); t.textContent = n <= 31 ? 's/d' : '·'; return; }
+    if (f.precip <= 0) return;
+    const yt = Math.min(yP(f.precip), base - 1.5), rr = Math.min(4, w / 3, base - yt);
+    sv('path', { d: `M${x0},${base} V${yt + rr} Q${x0},${yt} ${x0 + rr},${yt} H${x0 + w - rr} Q${x0 + w},${yt} ${x0 + w},${yt + rr} V${base}`,
+      fill: 'var(--water-soft)', stroke: 'var(--water)', 'stroke-width': 1.5, opacity: (f.completo || GRAN === 'dia') ? 1 : 0.5 }, svg);
+  });
+  sv('line', { x1: m.l, x2: W - m.r, y1: base, y2: base, stroke: 'var(--line)', 'stroke-width': 1 }, svg);
+  if (!precs.some(v => ok(v) && v > 0)) {
+    const t = sv('text', { x: m.l + pw / 2, y: m.t + 16, 'text-anchor': 'middle', class: 'dl' }, svg); t.textContent = 'Sin lluvia registrada en el período';
+  }
+
+  // Líneas de temperatura: media continua; máxima y mínima punteadas (como el original)
+  if (tt) {
+    const linea = (key, color, dash) => {
+      let seg = [];
+      const flush = () => { if (seg.length) sv('path', { d: smoothPath(seg), fill: 'none', stroke: color, 'stroke-width': 2, 'stroke-linejoin': 'round', 'stroke-linecap': 'round', ...(dash ? { 'stroke-dasharray': dash } : {}) }, svg); seg = []; };
+      FILAS.forEach((f, i) => { if (ok(f[key])) seg.push([x(i), yT(f[key])]); else flush(); }); flush();
+      if (n <= 40) FILAS.forEach((f, i) => { if (ok(f[key])) sv('circle', { cx: x(i), cy: yT(f[key]), r: 3, fill: color }, svg); });
+    };
+    linea('tmed', 'var(--ink-soft)', null);
+    linea('tmax', 'var(--heat)', '5 3');
+    linea('tmin', 'var(--water)', '5 3');
+  }
+
+  // Etiquetas del eje X sin solaparse
+  const labels = FILAS.map(xLabel);
+  const maxChars = Math.max(...labels.map(l => l.length));
+  const step = Math.max(1, Math.ceil(n / Math.max(1, Math.floor(pw / (maxChars * 7 + 10)))));
+  labels.forEach((l, i) => {
+    if (i % step) return;
+    const t = sv('text', { x: x(i), y: H - 6, 'text-anchor': 'middle' }, svg);
+    t.textContent = l + (FILAS[i].completo || GRAN === 'dia' ? '' : '*');
+  });
+
+  hoverLayer({ svg, m, ph, bw, x }, n, tipHtml);
+}
+
+function drawLegend() {
+  const it = (sw, txt) => `<div class="legend-item">${sw}${txt}</div>`;
+  const items = [
+    it('<span class="swatch" style="background:var(--water)"></span>', 'Precipitación (mm)'),
+    it('<span class="swatch line" style="background:var(--ink-soft)"></span>', 'Temp. media'),
+    it('<span class="swatch line" style="background:var(--heat)"></span>', GRAN === 'dia' ? 'Temp. máxima' : 'Temp. máx. promedio'),
+    it('<span class="swatch line" style="background:var(--water)"></span>', GRAN === 'dia' ? 'Temp. mínima' : 'Temp. mín. promedio'),
+  ];
+  if (VISTA === 'campania') items.push(it('<span class="swatch" style="background:var(--drought-soft)"></span>', 'Mes árido (Gaussen: P &lt; 2×T)'));
+  if (GRAN !== 'dia' && FILAS.some(f => !f.completo)) items.push(it('<span class="mono">*</span>', `${cap(UNIDAD.s)} incomplet${UNIDAD.gen === 'f' ? 'a' : 'o'} (no se compara)`));
+  document.getElementById('clima-legend').innerHTML = items.join('');
+}
+
+/* =====================================================================
+   Calendario de alertas: bloques mensuales (7 columnas, se lee igual en
+   celular, tablet y PC); en campañas largas con pantalla ancha, mapa
+   compacto de semanas en columnas.
+   ===================================================================== */
+const rainMix = (mm) => { const t = Math.min(mm / 20, 1); return { t, css: `background:color-mix(in srgb, var(--water) ${Math.round(t * 100)}%, var(--surface-2))` }; };
+function dayState(iso) {
+  const rec = daily[iso], fr = frostByDate[iso];
+  const dry = inRange(iso, D.dry_spells), wave = inRange(iso, D.heat_waves);
+  const hot = !!(rec && rec.tx != null && rec.tx >= U.heat_threshold);
+  const cls = [], tags = [];
+  let style = '';
+  if (!rec || rec.p == null) cls.push('nodata');
+  else if (dry) cls.push('dry');
+  else { const r = rainMix(rec.p); style = r.css; if (r.t > 0.55) cls.push('strong'); }
+  if (wave) cls.push('wave'); else if (hot) cls.push('hot');
+  if (fr) cls.push(fr.tipo === 'meteorologica' ? 'fr' : 'fr-agro');
+  if (dry) tags.push('racha seca'); if (wave) tags.push('ola de calor'); else if (hot) tags.push(`≥${fmtU(U.heat_threshold)} °C`);
+  if (fr) tags.push(fr.tipo === 'meteorologica' ? 'helada' : 'helada agronómica');
+  const tipTxt = !rec ? `<b>${fmtDateLong(iso)}</b><br>Sin registro` :
+    `<b>${fmtDateLong(iso)}</b><br>Lluvia: ${rec.p == null ? 's/d' : fmt1(rec.p) + ' mm'}<br>T° máx ${rec.tx == null ? 's/d' : fmt1(rec.tx) + ' °C'} · mín ${rec.tn == null ? 's/d' : fmt1(rec.tn) + ' °C'}${tags.length ? '<br>' + esc(tags.join(' · ')) : ''}`;
+  return { rec, cls, style, tipTxt };
+}
+function bindTips(container) {
+  const pos = (el, e) => { const r = el.getBoundingClientRect(); return e && e.pointerType === 'mouse' ? [e.clientX, e.clientY] : [r.left + r.width / 2, r.top]; };
+  container.addEventListener('pointermove', (e) => { if (e.pointerType !== 'mouse') return; const c = e.target.closest('[data-tip]'); if (c) showTip(c.dataset.tip, ...pos(c, e)); else hideTip(); });
+  container.addEventListener('pointerleave', hideTip);
+  container.addEventListener('pointerdown', (e) => { const c = e.target.closest('[data-tip]'); if (c && e.pointerType !== 'mouse') showTip(c.dataset.tip, ...pos(c, e)); });
+  container.addEventListener('focusin', (e) => { const c = e.target.closest('[data-tip]'); if (c) showTip(c.dataset.tip, ...pos(c)); });
+  container.addEventListener('focusout', hideTip);
+}
+function calBlocks(wrap) {
+  const startT = isoToT(K.fecha_inicio), endT = isoToT(K.fecha_fin);
+  const s = new Date(startT), e = new Date(endT);
+  let html = '<div class="cal-blocks">';
+  for (let y = s.getUTCFullYear(), m = s.getUTCMonth(); Date.UTC(y, m, 1) <= endT; m === 11 ? (y++, m = 0) : m++) {
+    const first = Date.UTC(y, m, 1), nDays = new Date(Date.UTC(y, m + 1, 0)).getUTCDate();
+    html += `<div class="cal-block"><h3>${MESES_L[m]} ${y}</h3><div class="dow">${['L','M','X','J','V','S','D'].map(d => `<span>${d}</span>`).join('')}</div><div class="days">`;
+    const lead = dowMon(first);
+    const semanaVisible = (d) => {            // la semana de ese día tiene al menos un día dentro del período
+      const lunes = Date.UTC(y, m, d) - dowMon(Date.UTC(y, m, d)) * DAY;
+      return lunes + 6 * DAY >= startT && lunes <= endT;
+    };
+    if (semanaVisible(1)) for (let k = 0; k < lead; k++) html += '<div class="cm blank" aria-hidden="true"></div>';
+    for (let d = 1; d <= nDays; d++) {
+      const t = Date.UTC(y, m, d), iso = tToIso(t);
+      if (!semanaVisible(d)) continue;
+      if (t < startT || t > endT) { html += `<div class="cm out" aria-hidden="true"><span class="d">${d}</span></div>`; continue; }
+      const st = dayState(iso);
+      const mm = st.rec && st.rec.p != null && st.rec.p >= 0.1 ? fmt1(st.rec.p) : '';
+      const aria = st.tipTxt.replace(/<br>/g, '. ').replace(/<[^>]+>/g, '');
+      html += `<div class="cm ${st.cls.join(' ')}" style="${st.style}" tabindex="0" role="img" aria-label="${esc(aria)}" data-tip="${esc(st.tipTxt)}"><span class="d">${d}</span><span class="mm">${mm}</span></div>`;
+    }
+    html += '</div></div>';
+  }
+  wrap.innerHTML = html + '</div>';
+  bindTips(wrap);
+}
+function calHeat(wrap, avail) {
+  const startT = isoToT(K.fecha_inicio), endT = isoToT(K.fecha_fin);
+  const refMonday = startT - dowMon(startT) * DAY;
+  const weeks = Math.floor((endT - refMonday) / DAY / 7) + 1;
+  const GAP = 3, CELL = Math.max(11, Math.min(24, Math.floor((avail - 32) / weeks) - GAP)), STEP = CELL + GAP;
+  let cells = '';
+  for (let t = startT; t <= endT; t += DAY) {
+    const iso = tToIso(t), st = dayState(iso), w = Math.floor((t - refMonday) / DAY / 7);
+    const aria = st.tipTxt.replace(/<br>/g, '. ').replace(/<[^>]+>/g, '');
+    cells += `<div class="cc ${st.cls.filter(c => c !== 'strong').join(' ')}" style="grid-column:${w + 1};grid-row:${dowMon(t) + 1};${st.style}" tabindex="0" role="img" aria-label="${esc(aria)}" data-tip="${esc(st.tipTxt)}"></div>`;
+  }
+  let months = '';
+  const s = new Date(startT);
+  for (let y = s.getUTCFullYear(), m = s.getUTCMonth(); Date.UTC(y, m, 1) <= endT; m === 11 ? (y++, m = 0) : m++) {
+    const ref = Math.max(Date.UTC(y, m, 1), startT);
+    months += `<span style="left:${Math.floor((ref - refMonday) / DAY / 7) * STEP}px">${cap(MESES_C[m])}</span>`;
+  }
+  wrap.innerHTML = `<div class="cal-scroll"><div class="cal-heat-inner">
+    <div class="cal-months" style="width:${weeks * STEP}px">${months}</div>
+    <div class="cal-row">
+      <div class="cal-dow" style="grid-template-rows:repeat(7, ${CELL}px);gap:${GAP}px">${['L','','X','','V','',''].map(l => `<span style="height:${CELL}px">${l}</span>`).join('')}</div>
+      <div class="cal-grid" style="grid-template-columns:repeat(${weeks}, ${CELL}px);grid-template-rows:repeat(7, ${CELL}px);gap:${GAP}px">${cells}</div>
+    </div></div></div>`;
+  bindTips(wrap);
+}
+function drawCalendar() {
+  const wrap = document.getElementById('cal-wrap');
+  const avail = isPrint() ? 690 : wrap.clientWidth;
+  const startT = isoToT(K.fecha_inicio), endT = isoToT(K.fecha_fin);
+  const weeks = Math.ceil(((endT - startT) / DAY + 1 + dowMon(startT)) / 7);
+  // mapa compacto solo en campaña y si entra con celdas legibles (≥12 px)
+  if (VISTA === 'campania' && avail >= weeks * 15 + 32) calHeat(wrap, avail);
+  else calBlocks(wrap);
+  const ej = (cls, extra = '') => `<span class="lg-cell ${cls}" style="${extra}"></span>`;
+  document.getElementById('cal-legend').innerHTML = [
+    `<span class="legend-item"><span class="scale">${[0,5,10,20].map(v => `<span style="${rainMix(v).css}"></span>`).join('')}</span>Lluvia (0 → ≥20 mm/día)</span>`,
+    `<span class="legend-item">${ej('', 'background:var(--drought)')}Racha seca (≥${U.dry_min_days} días &lt;${fmtU(U.dry_threshold)} mm)</span>`,
+    `<span class="legend-item">${ej('wave')}Ola de calor</span>`,
+    `<span class="legend-item">${ej('hot')}Día ≥${fmtU(U.heat_threshold)} °C</span>`,
+    `<span class="legend-item">${ej('fr')}Helada (≤${fmtU(U.frost_threshold)} °C)</span>`,
+    `<span class="legend-item">${ej('fr-agro')}Helada agronómica (≤${fmtU(U.agro_frost_threshold)} °C)</span>`,
+    `<span class="legend-item">${ej('nodata')}Sin dato</span>`,
+  ].join('');
+}
+
+/* ---------- lista de eventos ---------- */
+seccion('event-list', () => {
+  const ev = [
+    ...D.dry_spells.map(e => ({ k: e.inicio, cls: 'dry', txt: `<b>Racha seca</b> · ${fmtDateShort(e.inicio)} – ${fmtDateShort(e.fin)} (${e.dias} días${bordeAbierto(e) ? ', pudo durar más' : ''})` })),
+    ...D.heat_waves.map(e => ({ k: e.inicio, cls: 'heat', txt: `<b>Ola de calor</b> · ${fmtDateShort(e.inicio)} – ${fmtDateShort(e.fin)} (${e.dias} días, pico ${fmt1(e.tmax_pico)} °C)` })),
+    ...D.frosts.map(f => ({ k: f.fecha, cls: f.tipo === 'meteorologica' ? 'frost' : 'frost-agro',
+      txt: `<b>${f.tipo === 'meteorologica' ? 'Helada' : 'Helada agronómica'}</b> · ${fmtDateShort(f.fecha)} · ${fmt1(f.tmin)} °C · ${HELADA_EST[f.estacion]}` })),
+  ].sort((a, b) => a.k < b.k ? -1 : a.k > b.k ? 1 : 0);
+  document.getElementById('event-list').innerHTML = ev.length
+    ? ev.map(e => `<li><span class="dot ${e.cls}"></span><span>${e.txt}</span></li>`).join('')
+    : '<li class="empty">No hubo rachas secas, olas de calor ni heladas con los umbrales definidos.</li>';
+});
+
+/* ---------- tabla resumen (tarjetas en celular, tabla en tablet/PC/impresión) ---------- */
+seccion('resumen-body', () => {
+  const td = (label, val, cls = '') => `<td data-label="${esc(label)}"${cls ? ` class="${cls}"` : ''}>${val}</td>`;
+  const head = document.getElementById('resumen-head'), body = document.getElementById('resumen-body'), foot = document.getElementById('resumen-foot');
+  if (GRAN === 'dia') {
+    head.innerHTML = '<tr><th>Fecha</th><th>Lluvia (mm)</th><th>T° máx.</th><th>T° mín.</th><th>T° media</th><th>Amplitud</th><th>Alertas</th></tr>';
+    body.innerHTML = FILAS.map(f => {
+      const iso = f.inicio, fr = frostByDate[iso], tags = [];
+      if (f.falta) tags.push('<span class="tag na">sin registro</span>');
+      if (inRange(iso, D.heat_waves)) tags.push('<span class="tag heat">ola de calor</span>');
+      else if (f.tmax != null && f.tmax >= U.heat_threshold) tags.push(`<span class="tag heat">≥${fmtU(U.heat_threshold)} °C</span>`);
+      if (inRange(iso, D.dry_spells)) tags.push('<span class="tag dry">racha seca</span>');
+      if (fr) tags.push(`<span class="tag frost">${fr.tipo === 'meteorologica' ? 'helada' : 'helada agr.'}</span>`);
+      return `<tr class="${f.falta ? 'incompleto' : ''}">${td('Fecha', esc(f.label), 'c-main')}${td('Lluvia (mm)', fmt1(f.precip))}${td('T° máx.', fmt1(f.tmax))}${td('T° mín.', fmt1(f.tmin))}${td('T° media', fmt1(f.tmed))}${td('Amplitud', fmt1(f.amplitud))}${td('Alertas', tags.join('') || '—', tags.length ? 'c-wide' : '')}</tr>`;
+    }).join('');
+    foot.innerHTML = `<tr>${td('Período', 'Período', 'c-main')}${td('Lluvia total', fmt1(K.precip_total))}${td('Máx. absoluta', K.tmax_absoluto ? fmt1(K.tmax_absoluto.valor) : '—')}${td('Mín. absoluta', K.tmin_absoluto ? fmt1(K.tmin_absoluto.valor) : '—')}${td('', '')}${td('', '')}${td('', '')}</tr>`;
+    document.getElementById('resumen-note').textContent = 'Temperaturas en °C. Amplitud: diferencia entre la máxima y la mínima del día.';
+  } else {
+    const nom = GRAN === 'mes' ? 'Mes' : 'Década';
+    head.innerHTML = `<tr><th>${nom}</th><th>Días c/dato</th><th>Lluvia (mm)</th><th>T° media</th><th>T° máx. prom.</th><th>T° mín. prom.</th><th>T° máx. abs.</th><th>T° mín. abs.</th><th>Días ≥${fmtU(U.heat_threshold)} °C</th><th>Heladas ≤${fmtU(U.agro_frost_threshold)} °C</th></tr>`;
+    body.innerHTML = FILAS.map(f => `<tr class="${f.completo ? '' : 'incompleto'}">${td(nom, esc(f.label_largo) + (f.completo ? '' : '*'), 'c-main')}${td('Días c/dato', `${f.dias_p}/${f.dias}`)}${td('Lluvia (mm)', fmt1(f.precip))}${td('T° media', fmt1(f.tmed))}${td('T° máx. prom.', fmt1(f.tmax))}${td('T° mín. prom.', fmt1(f.tmin))}${td('T° máx. abs.', fmt1(f.tmax_abs))}${td('T° mín. abs.', fmt1(f.tmin_abs))}${td(`Días ≥${fmtU(U.heat_threshold)} °C`, f.dias_calor)}${td(`Heladas ≤${fmtU(U.agro_frost_threshold)} °C`, f.heladas_agro)}</tr>`).join('');
+    const sum = (k) => FILAS.reduce((a, f) => a + (f[k] || 0), 0);
+    foot.innerHTML = `<tr>${td('Período', 'Período', 'c-main')}${td('Días c/dato', `${K.n_dias_p}/${K.n_dias_calendario}`)}${td('Lluvia total', fmt1(K.precip_total))}${td('', '')}${td('', '')}${td('', '')}${td('Máx. absoluta', K.tmax_absoluto ? fmt1(K.tmax_absoluto.valor) : '—')}${td('Mín. absoluta', K.tmin_absoluto ? fmt1(K.tmin_absoluto.valor) : '—')}${td(`Días ≥${fmtU(U.heat_threshold)} °C`, sum('dias_calor'))}${td(`Heladas ≤${fmtU(U.agro_frost_threshold)} °C`, sum('heladas_agro'))}</tr>`;
+    document.getElementById('resumen-note').textContent = 'Temperaturas en °C.' + (FILAS.some(f => !f.completo) ? ` * ${cap(UNIDAD.s)} con menos del ${fmt0(U.min_month_coverage * 100)} % de días con dato: se muestra pero no se compara.` : '');
+  }
+});
+
+/* ---------- lectura ejecutiva: solo hechos calculados, en lenguaje simple ---------- */
+seccion('insights-list', () => {
+  const li = [];
+  const sinDato = K.n_dias_calendario - K.n_dias_p;
+  // 1. Lluvia
+  let t = `En los ${K.n_dias_calendario} días del período llovió un total de <b>${fmt1(K.precip_total)} mm</b>${sinDato ? ` (${sinDato} ${plural(sinDato,'día','días')} sin dato de lluvia)` : ''}. Hubo <b>${K.dias_con_lluvia} ${plural(K.dias_con_lluvia,'día','días')} con lluvia</b> de ${fmtU(U.dry_threshold)} mm o más y ${K.dias_sin_lluvia} sin lluvia.`;
+  if (K.lluvia_max_diaria) t += ` La lluvia más grande en un solo día fue de <b>${fmt1(K.lluvia_max_diaria.valor)} mm</b> el ${fmtDateShort(K.lluvia_max_diaria.fecha)}.`;
+  else t += ' No se registró lluvia en todo el período.';
+  if (GRAN !== 'dia' && K.unidad_mas_lluviosa && K.unidad_mas_seca && K.unidad_mas_lluviosa.label !== K.unidad_mas_seca.label) {
+    const a = UNIDAD.gen === 'f' ? 'La' : 'El', ls = K.unidad_mas_seca;
+    t += ` ${a} ${UNIDAD.lluv} fue <b>${esc(K.unidad_mas_lluviosa.label)}</b> (${fmt1(K.unidad_mas_lluviosa.valor)} mm) y ` +
+         (ls.n > 1 ? `las ${UNIDAD.p} más sec${UNIDAD.gen === 'f' ? 'as' : 'os'}, con ${fmt1(ls.valor)} mm, fueron ${esc(listaHumana(ls.labels))}.` : `${UNIDAD.gen === 'f' ? 'la más seca' : 'el más seco'}, <b>${esc(ls.label)}</b> (${fmt1(ls.valor)} mm).`);
+  }
+  if (K.unidades_incompletas.length) t += ` No se compararon por tener datos incompletos: ${esc(listaHumana(K.unidades_incompletas))}.`;
+  li.push(t);
+  // 2. Aridez (solo campaña, meses completos)
+  if (VISTA === 'campania' && FILAS.some(f => f.completo)) {
+    li.push(K.meses_aridos.length
+      ? `Según el criterio de Gaussen, ${K.meses_aridos.length === 1 ? 'resultó árido' : 'resultaron áridos'} <b>${esc(listaHumana(K.meses_aridos))}</b>.`
+      : 'Ningún mes completo resultó árido según el criterio de Gaussen.');
+  }
+  // 3. Rachas secas
+  const rm = K.racha_seca_max_evento, sg = K.seguidilla_seca_max;
+  if (K.n_dias_calendario < U.dry_min_days) {
+    li.push(sg ? `La seguidilla más larga sin lluvia fue de <b>${sg.dias} ${plural(sg.dias,'día','días')}</b>, del ${fmtDateShort(sg.inicio)} al ${fmtDateShort(sg.fin)}${notaBorde(sg)}.` : 'Llovió todos los días con dato.');
+  } else if (rm) {
+    let r = `Hubo <b>${K.num_rachas_secas} ${plural(K.num_rachas_secas,'racha seca','rachas secas')}</b>. La más larga duró <b>${rm.dias} días</b>, del ${fmtDateShort(rm.inicio)} al ${fmtDateShort(rm.fin)}${notaBorde(rm)}.`;
+    const ab = D.dry_spells.filter(e => e !== rm && bordeAbierto(e));
+    if (ab.length) r += ` ${ab.length === 1 ? 'Otra racha toca' : ab.length + ' rachas más tocan'} el borde de los datos (${ab.map(e => `${fmtDateShort(e.inicio)}–${fmtDateShort(e.fin)}`).join(', ')}) y pudo durar más.`;
+    li.push(r);
+  } else {
+    li.push(`No hubo rachas secas.${sg ? ` La seguidilla más larga sin lluvia fue de ${sg.dias} ${plural(sg.dias,'día','días')} (${fmtDateShort(sg.inicio)} – ${fmtDateShort(sg.fin)}).` : ''}`);
+  }
+  // 4. Calor
+  const aisl = Math.max(0, K.dias_estres_termico - K.dias_en_olas);
+  const pico = K.tmax_absoluto ? ` La temperatura más alta fue <b>${fmt1(K.tmax_absoluto.valor)} °C</b> el ${fmtDateShort(K.tmax_absoluto.fecha)}.` : '';
+  if (K.dias_estres_termico === 0) li.push(`Ningún día llegó a ${fmtU(U.heat_threshold)} °C de máxima.${pico}`);
+  else {
+    const olas = D.heat_waves.map(h => `${fmtDateShort(h.inicio)} al ${fmtDateShort(h.fin)} (${h.dias} días, hasta ${fmt1(h.tmax_pico)} °C)`);
+    li.push(`Hubo <b>${K.dias_estres_termico} ${plural(K.dias_estres_termico,'día','días')} con máxima de ${fmtU(U.heat_threshold)} °C o más</b>` +
+      (K.num_olas_calor ? `: ${K.dias_en_olas} formaron ${K.num_olas_calor} ${plural(K.num_olas_calor,'ola de calor','olas de calor')} (${olas.join('; ')})${aisl ? ` y ${aisl} ${plural(aisl,'fue aislado','fueron aislados')}` : ''}` : `, ninguno dentro de una ola de calor`) + `.${pico}`);
+  }
+  // 5. Heladas
+  const minAbs = K.tmin_absoluto ? ` La temperatura más baja fue <b>${fmt1(K.tmin_absoluto.valor)} °C</b> el ${fmtDateShort(K.tmin_absoluto.fecha)}.` : '';
+  if (!D.frosts.length) li.push(`No hubo heladas: la mínima no bajó de ${fmtU(U.agro_frost_threshold)} °C.${minAbs}`);
+  else {
+    const items = D.frosts.slice(0, 8).map(f => `${fmtDateShort(f.fecha)} (${fmt1(f.tmin)} °C${f.tipo === 'meteorologica' ? ', helada' : ''})`);
+    li.push(`Hubo <b>${K.num_heladas_agro} ${plural(K.num_heladas_agro,'día','días')} con helada agronómica</b> (${fmtU(U.agro_frost_threshold)} °C o menos)` +
+      `${K.num_heladas ? `, de ${K.num_heladas === 1 ? 'los cuales 1 llegó' : `los cuales ${K.num_heladas} llegaron`} a helada (${fmtU(U.frost_threshold)} °C o menos)` : ', ninguno llegó a helada (0 °C o menos)'}: ` +
+      `${items.join('; ')}${D.frosts.length > 8 ? ` y ${D.frosts.length - 8} más` : ''}.${minAbs}`);
+  }
+  // 6. Calidad de datos
+  const cal = [];
+  if (K.dias_faltantes.length) cal.push(`${K.dias_faltantes.length} ${plural(K.dias_faltantes.length,'día','días')} sin registro (${K.dias_faltantes.slice(0, 8).map(fmtDateShort).join(', ')}${K.dias_faltantes.length > 8 ? '…' : ''}), que no se rellenaron`);
+  if (Q.n_valores_descartados) cal.push(`${Q.n_valores_descartados} ${plural(Q.n_valores_descartados,'valor descartado','valores descartados')} por inválidos`);
+  if (Q.duplicados_identicos.length) cal.push(`${Q.duplicados_identicos.length} ${plural(Q.duplicados_identicos.length,'fecha repetida','fechas repetidas')} (se contó una vez)`);
+  if (Q.trazas) cal.push(`${Q.trazas} ${plural(Q.trazas,'día','días')} con lluvia «traza» tomados como 0 mm`);
+  if (D.meta.tmed_estimada) cal.push('la temperatura media se calculó como el promedio de máxima y mínima');
+  if (D.meta.unidades_convertidas.temp_desde_F) cal.push('temperaturas convertidas desde °F');
+  if (D.meta.unidades_convertidas.precip_desde_in) cal.push('lluvia convertida desde pulgadas');
+  if (Q.extremos_plausibles.length) cal.push(`valores extremos para revisar: ${Q.extremos_plausibles.map(x => `${fmtDateShort(x.fecha)} ${fmt1(x.valor)} ${x.var === 'p' ? 'mm' : '°C'}`).join(', ')}`);
+  li.push(cal.length ? `Calidad de los datos: ${cal.join('; ')}.` : 'Calidad de los datos: serie completa, sin valores descartados.');
+  document.getElementById('insights-list').innerHTML = li.map(x => `<li>${x}</li>`).join('');
+
+  // Glosario breve (solo los términos que aparecen en esta vista)
+  const g = [
+    ['Día con lluvia', `día con ${fmtU(U.dry_threshold)} mm o más.`],
+    ['Ola de calor', `${U.heat_min_days} o más días seguidos con máxima de ${fmtU(U.heat_threshold)} °C o más.`],
+    ['Racha seca', `${U.dry_min_days} o más días seguidos con menos de ${fmtU(U.dry_threshold)} mm por día. Un día sin dato corta la racha.`],
+    ['Helada', `temperatura mínima de ${fmtU(U.frost_threshold)} °C o menos, medida en el abrigo meteorológico (a 1,5 m de altura aprox.).`],
+    ['Helada agronómica', `mínima de ${fmtU(U.agro_frost_threshold)} °C o menos en el abrigo. A ras del suelo suele hacer varios grados menos, por lo que ya puede dañar cultivos sensibles.`],
+  ];
+  if (GRAN === 'decada') g.push(['Década', 'cada mes se divide en tres partes: del 1 al 10, del 11 al 20 y del 21 a fin de mes.']);
+  if (VISTA === 'campania') g.push(['Mes árido (Gaussen)', 'mes en el que la lluvia (mm) fue menor que el doble de la temperatura media (°C).']);
+  if (GRAN !== 'dia' && FILAS.some(f => !f.completo)) g.push([`${cap(UNIDAD.s)} incomplet${UNIDAD.gen === 'f' ? 'a' : 'o'} (*)`, `tiene menos del ${fmt0(U.min_month_coverage * 100)} % de días con dato; se muestra, pero no entra en las comparaciones.`]);
+  document.getElementById('glosario').innerHTML = `<h3>CÓMO LEER ESTE INFORME</h3><dl>${g.map(([a, b]) => `<dt>${a}</dt><dd>${b}</dd>`).join('')}</dl>`;
+  document.getElementById('nota-metodo').textContent = 'Eventos calculados a partir de los datos diarios de la estación; no se usaron columnas de alerta del archivo de origen.' + (D.meta.nota_extra ? ' ' + D.meta.nota_extra : '');
+});
+
+seccion('footer-note', () => {
+  document.getElementById('footer-note').textContent = `Generado el ${fmtDateLong(D.meta.generado)} (skill tablero-agrometeorologico v${D.meta.version}).`;
+});
+
+/* ---------- dibujo adaptable: al cargar, al cambiar el ancho, al imprimir ---------- */
+function drawVisual() {
+  hideTip();
+  seccion('climograma', drawClimograma);
+  seccion('cal-wrap', drawCalendar);
+}
+seccion('clima-legend', drawLegend);
+drawVisual();
+let lastW = window.innerWidth, timer = null;
+window.addEventListener('resize', () => {
+  if (window.innerWidth === lastW) return;           // ignora cambios solo de alto (barra del navegador móvil)
+  lastW = window.innerWidth; clearTimeout(timer); timer = setTimeout(drawVisual, 150);
+});
+const mqPrint = window.matchMedia('print');
+if (mqPrint.addEventListener) mqPrint.addEventListener('change', drawVisual);
+window.addEventListener('beforeprint', drawVisual);
+window.addEventListener('afterprint', drawVisual);
+</script>
+</body>
+</html>
